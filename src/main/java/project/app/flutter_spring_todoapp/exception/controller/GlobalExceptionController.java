@@ -15,11 +15,10 @@ public class GlobalExceptionController {
     @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse<Object> bindException(final BindException e){
-        log.debug("[bindException] msg = {} ,cause = {}", e.getMessage(), e.getCause());
+        String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        log.debug("[bindException] msg = {}", message);
         return ApiErrorResponse.badRequest(
-                e.getBindingResult()
-                        .getAllErrors().get(0)
-                        .getDefaultMessage(),
+                message,
                 null
         );
     }
