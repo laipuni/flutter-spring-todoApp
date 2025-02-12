@@ -1,12 +1,14 @@
-package project.app.flutter_spring_todoapp.domain.todo.domain;
+package project.app.flutter_spring_todoapp.todo.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class Todo {
