@@ -1,8 +1,12 @@
 package project.app.flutter_spring_todoapp.exception.api;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import project.app.flutter_spring_todoapp.api.ApiResponse;
 
+@Getter
+@NoArgsConstructor
 public class ApiErrorResponse<T> {
 
     private HttpStatus status;
@@ -10,7 +14,7 @@ public class ApiErrorResponse<T> {
     private String message;
     private T data;
 
-    public ApiErrorResponse(final HttpStatus status, final String message, final int code, final T data) {
+    private ApiErrorResponse(final HttpStatus status, final String message, final int code, final T data) {
         this.status = status;
         this.message = message;
         this.code = code;

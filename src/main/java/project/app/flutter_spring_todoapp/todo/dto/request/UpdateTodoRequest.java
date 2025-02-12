@@ -27,11 +27,9 @@ public class UpdateTodoRequest {
     private String description;
 
     @NotNull(message = "시작 날짜는 필수입니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
     @NotNull(message = "마감 날짜는 필수입니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 
     @NotNull(message = "우선 순위는 필수입니다.")
