@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import project.app.flutter_spring_todoapp.api.ApiResponse;
 import project.app.flutter_spring_todoapp.todo.dto.request.AddTodoRequest;
+import project.app.flutter_spring_todoapp.todo.dto.request.DeleteTodoRequest;
 import project.app.flutter_spring_todoapp.todo.dto.request.UpdateTodoRequest;
-import project.app.flutter_spring_todoapp.todo.dto.response.AddTodoResponse;
-import project.app.flutter_spring_todoapp.todo.dto.response.DetailTodoResponse;
-import project.app.flutter_spring_todoapp.todo.dto.response.TodoListResponse;
-import project.app.flutter_spring_todoapp.todo.dto.response.UpdateTodoResponse;
+import project.app.flutter_spring_todoapp.todo.dto.response.*;
 import project.app.flutter_spring_todoapp.todo.service.TodoService;
 
 @RestController
@@ -39,6 +37,12 @@ public class TodoController {
     @PutMapping("/api/todos")
     public ApiResponse<UpdateTodoResponse> updateTodo(@Valid @RequestBody UpdateTodoRequest request){
         UpdateTodoResponse response = todoService.update(request);
+        return ApiResponse.ok(response);
+    }
+
+    @DeleteMapping("/api/todos")
+    public ApiResponse<DeleteTodoResponse> deleteTodo(@Valid @RequestBody DeleteTodoRequest request){
+        DeleteTodoResponse response = todoService.removeTodoBy(request.getTodoId());
         return ApiResponse.ok(response);
     }
 }
