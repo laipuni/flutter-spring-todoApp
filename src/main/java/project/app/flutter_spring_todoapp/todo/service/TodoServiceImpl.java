@@ -56,6 +56,7 @@ public class TodoServiceImpl implements TodoService{
     @Override
     public DeleteTodoResponse removeTodoBy(final Long todoId) {
         todoRepository.deleteById(todoId);
+        log.info("할일(id : {})를 삭제했다.",todoId);
         return DeleteTodoResponse.of(todoId);
     }
 }
