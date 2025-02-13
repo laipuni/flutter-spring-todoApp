@@ -3,10 +3,12 @@ package project.app.flutter_spring_todoapp.todo.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.app.flutter_spring_todoapp.todo.domain.Todo;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -15,14 +17,14 @@ public class AddTodoResponse {
     private Long id;
     private String title;
     private String description;
-    private LocalDate startDate;
-    private LocalDate dueDate;
+    private LocalDateTime startDate;
+    private LocalDateTime dueDate;
     private TodoStatus status;
     private TodoPriority priority;
 
     @Builder
     private AddTodoResponse(final Long id, final String title, final String description,
-                           final LocalDate startDate, final LocalDate dueDate,
+                           final LocalDateTime startDate, final LocalDateTime dueDate,
                            final TodoStatus status, final TodoPriority priority) {
         this.id = id;
         this.title = title;
@@ -33,4 +35,15 @@ public class AddTodoResponse {
         this.priority = priority;
     }
 
+    public static AddTodoResponse of(final Todo todo) {
+        return AddTodoResponse.builder()
+                .id(todo.getId())
+                .title(todo.getTitle())
+                .description(todo.getDescription())
+                .startDate(todo.getStartDate())
+                .dueDate(todo.getDueDate())
+                .status(todo.getStatus())
+                .priority(todo.getPriority())
+                .build();
+    }
 }

@@ -1,17 +1,16 @@
 package project.app.flutter_spring_todoapp.todo.dto.request;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -27,10 +26,10 @@ public class UpdateTodoRequest {
     private String description;
 
     @NotNull(message = "시작 날짜는 필수입니다.")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @NotNull(message = "마감 날짜는 필수입니다.")
-    private LocalDate dueDate;
+    private LocalDateTime dueDate;
 
     @NotNull(message = "우선 순위는 필수입니다.")
     private TodoPriority priority;
@@ -40,8 +39,8 @@ public class UpdateTodoRequest {
 
     @Builder
     private UpdateTodoRequest(final Long todoId, final String title,
-                              final String description, final LocalDate startDate,
-                              final LocalDate dueDate, final TodoPriority priority,
+                              final String description, final LocalDateTime startDate,
+                              final LocalDateTime dueDate, final TodoPriority priority,
                               final TodoStatus status
     ) {
         this.todoId = todoId;

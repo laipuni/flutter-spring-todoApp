@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -24,10 +25,10 @@ public class Todo {
     private String description;
 
     @Column(name = "start_date",nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "due_date", nullable = false)
-    private LocalDate dueDate;
+    private LocalDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
     private TodoStatus status;
@@ -37,7 +38,7 @@ public class Todo {
 
     @Builder
     private Todo(final String title, final String description,
-                 final LocalDate startDate, final LocalDate dueDate,
+                 final LocalDateTime startDate, final LocalDateTime dueDate,
                  final TodoStatus status, final TodoPriority priority) {
         this.title = title;
         this.description = description;
@@ -48,8 +49,21 @@ public class Todo {
     }
 
     public static Todo of(final String title, final String description,
-                     final LocalDate startDate, final LocalDate dueDate,
-                     final TodoStatus status, final TodoPriority priority){
+                          final LocalDateTime startDate, final LocalDateTime dueDate,
+                          final TodoPriority priority){
+
+        return of(title,description,startDate,dueDate,null,priority);
+    }
+
+    public static Todo of(final String title, final String description,
+                          final LocalDateTime startDate, final LocalDateTime dueDate,
+                          TodoStatus status, final TodoPriority priority
+    ){
+        if(status == null){
+            //사용자가 상태를 설정하지 않았을 경우 지정한 날짜에 따라 상태를 지정함
+            status = calculateStatus(startDate, dueDate);
+        }
+
         return Todo.builder()
                 .title(title)
                 .description(description)
@@ -60,21 +74,32 @@ public class Todo {
                 .build();
     }
 
+    private static TodoStatus calculateStatus(final LocalDateTime startDate, final LocalDateTime dueDate) {
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(startDate)) {
+            return TodoStatus.TODO;
+        } else if (now.isAfter(dueDate)) {
+            return TodoStatus.DONE;
+        } else {
+            return TodoStatus.IN_PROGRESS;
+        }
+    }
+
     public void update(final String title,final String description){
         this.title = StringUtils.hasText(title) ? title : "빈 제목";
         this.description = description;
     }
 
-    public void changeStartDate(final LocalDate startDate){
+    public void changeStartDate(final LocalDateTime startDate){
         this.startDate = startDate;
     }
 
 
-    public void changeDueDate(final LocalDate dueDate){
+    public void changeDueDate(final LocalDateTime dueDate){
         this.dueDate = dueDate;
     }
 
-    public void changeDate(final LocalDate startDate, final LocalDate dueDate){
+    public void changeDate(final LocalDateTime startDate, final LocalDateTime dueDate){
         changeStartDate(startDate);
         changeDueDate(dueDate);
     }

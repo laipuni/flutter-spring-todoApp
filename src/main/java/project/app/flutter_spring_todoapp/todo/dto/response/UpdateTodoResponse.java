@@ -8,6 +8,7 @@ import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -17,15 +18,15 @@ public class UpdateTodoResponse {
     private Long todoId;
     private String title;
     private String description;
-    private LocalDate startDate;
-    private LocalDate dueDate;
+    private LocalDateTime startDate;
+    private LocalDateTime dueDate;
     private TodoPriority priority;
     private TodoStatus status;
 
     @Builder
     private UpdateTodoResponse(final Long todoId, final String title,
-                              final String description, final LocalDate startDate,
-                              final LocalDate dueDate, final TodoPriority priority,
+                              final String description, final LocalDateTime startDate,
+                              final LocalDateTime dueDate, final TodoPriority priority,
                               final TodoStatus status
     ) {
         this.todoId = todoId;

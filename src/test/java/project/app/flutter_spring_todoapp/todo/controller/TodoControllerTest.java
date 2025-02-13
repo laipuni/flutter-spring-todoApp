@@ -24,6 +24,8 @@ import project.app.flutter_spring_todoapp.todo.service.TodoService;
 import project.app.flutter_spring_todoapp.web.converter.config.WebMvcConfig;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,8 +53,9 @@ class TodoControllerTest {
     @Test
     void findTodos() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         //요청 값 선언
         String title = "할일1";
@@ -88,8 +91,8 @@ class TodoControllerTest {
                 .andExpect(jsonPath("$.data.todoList[0].id").value(todo.getId()))
                 .andExpect(jsonPath("$.data.todoList[0].title").value(todo.getTitle()))
                 .andExpect(jsonPath("$.data.todoList[0].description").value(todo.getDescription()))
-                .andExpect(jsonPath("$.data.todoList[0].startDate").value(todo.getStartDate().toString()))
-                .andExpect(jsonPath("$.data.todoList[0].dueDate").value(todo.getDueDate().toString()))
+                .andExpect(jsonPath("$.data.todoList[0].startDate").value(todo.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .andExpect(jsonPath("$.data.todoList[0].dueDate").value(todo.getDueDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.data.todoList[0].priority").value("MEDIUM"))
                 .andExpect(jsonPath("$.data.todoList[0].status").value("IN_PROGRESS"));
 
@@ -99,8 +102,9 @@ class TodoControllerTest {
     @Test
     void addTodo() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         //요청 값 선언
         String title = "할일1";
@@ -143,8 +147,8 @@ class TodoControllerTest {
                 .andExpect(jsonPath("$.data.id").value(response.getId()))
                 .andExpect(jsonPath("$.data.title").value(response.getTitle()))
                 .andExpect(jsonPath("$.data.description").value(response.getDescription()))
-                .andExpect(jsonPath("$.data.startDate").value(response.getStartDate().toString()))
-                .andExpect(jsonPath("$.data.dueDate").value(response.getDueDate().toString()))
+                .andExpect(jsonPath("$.data.startDate").value(response.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .andExpect(jsonPath("$.data.dueDate").value(response.getDueDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.data.priority").value("MEDIUM"))
                 .andExpect(jsonPath("$.data.status").value("IN_PROGRESS"));
     }
@@ -153,8 +157,9 @@ class TodoControllerTest {
     @Test
     void addTodoWithEmptyTitle() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         //요청 값 선언
         String title = ""; // 빈 제목 입력
@@ -201,8 +206,9 @@ class TodoControllerTest {
     @Test
     void addTodoWithWrongSizeTitle() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         //요청 값 선언
         String title = UUID.randomUUID().toString(); // 지정한 길이보다 긴 제목 입력
@@ -251,8 +257,9 @@ class TodoControllerTest {
     @Test
     void addTodoWithNullStartDate() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         //요청 값 선언
         String title = "할일1"; // 지정한 길이보다 긴 제목 입력
@@ -301,7 +308,7 @@ class TodoControllerTest {
     @Test
     void addTodoWithNullDueDate() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
+        LocalDateTime startDate = LocalDateTime.now();
 
         //요청 값 선언
         String title = "할일1"; // 지정한 길이보다 긴 제목 입력
@@ -350,8 +357,9 @@ class TodoControllerTest {
     @Test
     void addTodoWithNullPriority() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         //요청 값 선언
         String title = "할일1"; // 지정한 길이보다 긴 제목 입력
@@ -398,8 +406,9 @@ class TodoControllerTest {
     @Test
     void detailTodo() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         String title = "할일1";
         String description = "할일1의 설명";
@@ -428,8 +437,8 @@ class TodoControllerTest {
                 .andExpect(jsonPath("$.data.id").value(response.getId()))
                 .andExpect(jsonPath("$.data.title").value(response.getTitle()))
                 .andExpect(jsonPath("$.data.description").value(response.getDescription()))
-                .andExpect(jsonPath("$.data.startDate").value(response.getStartDate().toString()))
-                .andExpect(jsonPath("$.data.dueDate").value(response.getDueDate().toString()))
+                .andExpect(jsonPath("$.data.startDate").value(response.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .andExpect(jsonPath("$.data.dueDate").value(response.getDueDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.data.priority").value("MEDIUM"))
                 .andExpect(jsonPath("$.data.status").value("IN_PROGRESS"));
     }
@@ -438,8 +447,9 @@ class TodoControllerTest {
     @Test
     void updateTodo() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         String title = "변경된 할일 제목";
         String description = "변경된 할일의 설명";
@@ -483,8 +493,8 @@ class TodoControllerTest {
                 .andExpect(jsonPath("$.data.todoId").value(response.getTodoId()))
                 .andExpect(jsonPath("$.data.title").value(response.getTitle()))
                 .andExpect(jsonPath("$.data.description").value(response.getDescription()))
-                .andExpect(jsonPath("$.data.startDate").value(response.getStartDate().toString()))
-                .andExpect(jsonPath("$.data.dueDate").value(response.getDueDate().toString()))
+                .andExpect(jsonPath("$.data.startDate").value(response.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .andExpect(jsonPath("$.data.dueDate").value(response.getDueDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.data.priority").value("HIGH"))
                 .andExpect(jsonPath("$.data.status").value("DONE"));
     }
@@ -493,8 +503,9 @@ class TodoControllerTest {
     @Test
     void updateTodoWithNullTodoId() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         String title = "변경된 할일 제목";
         String description = "변경된 할일의 설명";
@@ -542,8 +553,9 @@ class TodoControllerTest {
     @Test
     void updateTodoWithEmptyTitle() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         String title = "";// 빈제목 입력
         String description = "변경된 할일의 설명";
@@ -591,8 +603,9 @@ class TodoControllerTest {
     @Test
     void updateTodoWithWrongSizeTitle() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         String title = UUID.randomUUID().toString(); // 지정한 길이보다 긴 제목 입력
         String description = "변경된 할일의 설명";
@@ -640,8 +653,9 @@ class TodoControllerTest {
     @Test
     void updateTodoWithNullStartDate() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
         String title = "변경된 할일 제목";
         String description = "변경된 할일의 설명";
@@ -689,7 +703,7 @@ class TodoControllerTest {
     @Test
     void updateTodoWithNullDueDate() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
+        LocalDateTime startDate = LocalDateTime.now();
 
         String title = "변경된 할일 제목";
         String description = "변경된 할일의 설명";
@@ -737,8 +751,9 @@ class TodoControllerTest {
     @Test
     void updateTodoWithNullPriority() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
 
         String title = "변경된 할일 제목";
@@ -787,8 +802,9 @@ class TodoControllerTest {
     @Test
     void updateTodoWithNullStatus() throws Exception {
         //given
-        LocalDate startDate = LocalDate.now();
-        LocalDate dueDate = LocalDate.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+        ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
 
 
         String title = "변경된 할일 제목";
