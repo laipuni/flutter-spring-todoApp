@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 import project.app.flutter_spring_todoapp.todo.dto.request.AddTodoRequest;
+import project.app.flutter_spring_todoapp.todo.dto.request.DeleteTodoRequest;
 import project.app.flutter_spring_todoapp.todo.dto.request.UpdateTodoRequest;
 import project.app.flutter_spring_todoapp.todo.dto.response.*;
 import project.app.flutter_spring_todoapp.todo.service.TodoService;
@@ -38,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {
         TodoController.class
 })
-class TodoControllerTest {
+class
+TodoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -847,5 +849,35 @@ class TodoControllerTest {
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("일의 상태는 필수입니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("할일 삭제 요청 테스트")
+    @Test
+    void removeTodoById() throws Exception {
+        //given
+
+        DeleteTodoRequest request = DeleteTodoRequest.builder()
+                .todoId(1L)
+                .build();
+
+        String body = objectMapper.writeValueAsString(request);
+
+        DeleteTodoResponse response = DeleteTodoResponse.builder()
+                .todoId(1L)
+                .build();
+
+        Mockito.when(todoService.removeTodoBy(Mockito.anyLong())).thenReturn(response);
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos")
+                        .contentType(APPLICATION_JSON)
+                        .content(body)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data.todoId").value(response.getTodoId()));
+
     }
 }
