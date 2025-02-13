@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import project.app.flutter_spring_todoapp.todo.domain.Todo;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 
@@ -36,6 +37,17 @@ public class UpdateTodoResponse {
         this.dueDate = dueDate;
         this.priority = priority;
         this.status = status;
+    }
+
+    public static UpdateTodoResponse of(final Todo todo){
+        return UpdateTodoResponse.builder()
+                .title(todo.getTitle())
+                .description(todo.getDescription())
+                .startDate(todo.getStartDate())
+                .dueDate(todo.getDueDate())
+                .status(todo.getStatus())
+                .priority(todo.getPriority())
+                .build();
     }
 }
 

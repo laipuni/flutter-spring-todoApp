@@ -3,6 +3,7 @@ package project.app.flutter_spring_todoapp.todo.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.app.flutter_spring_todoapp.todo.domain.Todo;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 
@@ -34,4 +35,15 @@ public class DetailTodoResponse {
         this.priority = priority;
     }
 
+    public static DetailTodoResponse of(final Todo todo) {
+        return DetailTodoResponse.builder()
+                .id(todo.getId())
+                .title(todo.getTitle())
+                .description(todo.getDescription())
+                .startDate(todo.getStartDate())
+                .dueDate(todo.getDueDate())
+                .status(todo.getStatus())
+                .priority(todo.getPriority())
+                .build();
+    }
 }

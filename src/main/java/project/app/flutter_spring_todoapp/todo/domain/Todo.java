@@ -85,9 +85,14 @@ public class Todo {
         }
     }
 
-    public void update(final String title,final String description){
+    public void update(final String title, final String description,
+                       final LocalDateTime startDate, final LocalDateTime dueDate,
+                       final TodoStatus status, final TodoPriority priority){
         this.title = StringUtils.hasText(title) ? title : "빈 제목";
         this.description = description;
+        changeDate(startDate,dueDate);
+        this.status = status != null ? status : this.status;
+        this.priority = priority != null ? priority : this.priority;
     }
 
     public void changeStartDate(final LocalDateTime startDate){
