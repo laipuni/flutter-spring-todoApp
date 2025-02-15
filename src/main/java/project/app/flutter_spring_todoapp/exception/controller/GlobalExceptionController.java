@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.app.flutter_spring_todoapp.exception.api.ApiErrorResponse;
+import project.app.flutter_spring_todoapp.exception.fcm.FailedSendFcmException;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,6 +20,17 @@ public class GlobalExceptionController {
         log.debug("[bindException] msg = {}", message);
         return ApiErrorResponse.badRequest(
                 message,
+                null
+        );
+    }
+
+    @ExceptionHandler(FailedSendFcmException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> FailedSendFcmException(final FailedSendFcmException e){
+        log.error("[FailedSendFcmException] fcm 메세지 전송 실패 msg = {}, cause", e.getMessage(), e.getCause());
+        //개발자에게 slack 메시지 혹은 이메일로 알림을 전송해야 함
+        return ApiErrorResponse.badRequest(
+                e.getMessage(),
                 null
         );
     }
