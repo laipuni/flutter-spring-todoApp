@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import project.app.flutter_spring_todoapp.member.Member;
+import project.app.flutter_spring_todoapp.notification.TimeType;
 import project.app.flutter_spring_todoapp.todo.domain.Todo;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
@@ -34,20 +36,23 @@ public class AddTodoRequest {
 
     private TodoStatus status;
 
+    private TimeType timeType = TimeType.NONE; //기본 값으로는 None 상태
+
     @Builder
     private AddTodoRequest(final String title, final String description,
                            final LocalDateTime startDate, final LocalDateTime duetDate,
-                           final TodoStatus status, final TodoPriority priority) {
+                           final TodoStatus status, final TodoPriority priority, final  TimeType timeType) {
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.duetDate = duetDate;
         this.status = status;
         this.priority = priority;
+        this.timeType = timeType;
     }
 
-    public Todo toEntity() {
+    public Todo toEntity(final Member member) {
         return Todo.of(this.title,this.description,this.startDate,
-                this.duetDate,this.status, this.priority);
+                this.duetDate,this.status, this.priority,member);
     }
 }

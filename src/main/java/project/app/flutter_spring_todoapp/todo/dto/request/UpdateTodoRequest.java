@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.app.flutter_spring_todoapp.notification.TimeType;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 
@@ -37,11 +38,13 @@ public class UpdateTodoRequest {
     @NotNull(message = "일의 상태는 필수입니다.")
     private TodoStatus status;
 
+    private TimeType timeType;
+
     @Builder
     private UpdateTodoRequest(final Long todoId, final String title,
                               final String description, final LocalDateTime startDate,
                               final LocalDateTime dueDate, final TodoPriority priority,
-                              final TodoStatus status
+                              final TodoStatus status,final TimeType timeType
     ) {
         this.todoId = todoId;
         this.title = title;
@@ -50,6 +53,7 @@ public class UpdateTodoRequest {
         this.dueDate = dueDate;
         this.priority = priority;
         this.status = status;
+        this.timeType = timeType;
     }
 
 }

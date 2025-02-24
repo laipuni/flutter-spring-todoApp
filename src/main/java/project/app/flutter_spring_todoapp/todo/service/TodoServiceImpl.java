@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.app.flutter_spring_todoapp.exception.global.UnAuthorizationException;
+import project.app.flutter_spring_todoapp.member.Member;
+import project.app.flutter_spring_todoapp.member.repository.MemberRepository;
+import project.app.flutter_spring_todoapp.todo.TodoUpdateDto;
 import project.app.flutter_spring_todoapp.todo.domain.Todo;
-import project.app.flutter_spring_todoapp.todo.dto.request.AddTodoRequest;
-import project.app.flutter_spring_todoapp.todo.dto.request.UpdateTodoRequest;
+import project.app.flutter_spring_todoapp.todo.dto.TodoDeleteDto;
+import project.app.flutter_spring_todoapp.todo.dto.TodoSaveDto;
 import project.app.flutter_spring_todoapp.todo.dto.response.*;
 import project.app.flutter_spring_todoapp.todo.repository.TodoRepository;
 
@@ -17,32 +21,40 @@ import project.app.flutter_spring_todoapp.todo.repository.TodoRepository;
 public class TodoServiceImpl implements TodoService{
 
     private final TodoRepository todoRepository;
+    private final MemberRepository memberRepository;
+
 
     @Transactional
     @Override
-    public AddTodoResponse save(final AddTodoRequest request) {
-        Todo todo = todoRepository.save(request.toEntity());
+    public Todo save(final TodoSaveDto todoServiceDto, final Long MemberId) {
+        Member member = memberRepository.findById(MemberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+        Todo todo = todoRepository.save(todoServiceDto.toEntity(member));
         log.info("할일(id:{}) \"{}\"을 생성했다",todo.getId(),todo.getTitle());
-        return AddTodoResponse.of(todo);
+        return todo;
     }
 
     @Override
-    public TodoListResponse findAll() {
-        return TodoListResponse.of(todoRepository.findAll());
+    public TodoListResponse findAll(final Long memberId) {
+        return TodoListResponse.of(todoRepository.findAllByMemberIdOrderByIdDesc(memberId));
     }
 
     @Transactional
     @Override
-    public UpdateTodoResponse update(final UpdateTodoRequest request) {
+    public Todo update(final TodoUpdateDto request) {
         Todo todo = todoRepository.findById(request.getTodoId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 할일은 존재하지 않습니다."));
+        if(!todo.isWriter(request.getUpdaterId())){
+            log.debug("사용자(id :{})는 할일(id : {})를 삭제할 권한이 없다", request.getUpdaterId(), request.getTodoId());
+            throw new UnAuthorizationException("할일을 제거할 권한이 없습니다.");
+        }
         todo.update(
                 request.getTitle(),request.getDescription(),
                 request.getStartDate(),request.getDueDate(),
                 request.getStatus(),request.getPriority()
         );
-        log.info("할일(id : {})가 수정됐다.");
-        return UpdateTodoResponse.of(todo);
+        log.info("사용자(id :{})는 할일(id : {})을 수정했다.", request.getUpdaterId(), request.getTodoId());
+        return todo;
     }
 
     @Override
@@ -54,9 +66,17 @@ public class TodoServiceImpl implements TodoService{
 
     @Transactional
     @Override
-    public DeleteTodoResponse removeTodoBy(final Long todoId) {
+    public DeleteTodoResponse removeTodoBy(final TodoDeleteDto deleteDto) {
+        Long todoId = deleteDto.getTodoId();
+        Long deleterId = deleteDto.getDeleterId();
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 할일은 존재하지 않습니다."));
+        if(!todo.isWriter(deleterId)){
+            log.debug("사용자(id :{})는 할일(id : {})를 삭제할 권한이 없다", deleterId, todoId);
+            throw new UnAuthorizationException("할일을 제거할 권한이 없습니다.");
+        }
         todoRepository.deleteById(todoId);
-        log.info("할일(id : {})를 삭제했다.",todoId);
+        log.info("할일(id : {})를 삭제했다.", todoId);
         return DeleteTodoResponse.of(todoId);
     }
 }
