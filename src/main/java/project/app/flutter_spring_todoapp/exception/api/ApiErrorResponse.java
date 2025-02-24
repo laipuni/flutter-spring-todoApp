@@ -25,4 +25,8 @@ public class ApiErrorResponse<T> {
         return new ApiErrorResponse<>(HttpStatus.BAD_REQUEST, message,
                 HttpStatus.BAD_REQUEST.value(), data);
     }
+
+    public static <T> ApiErrorResponse<T> of(final HttpStatus status, final String message, final T data) {
+        return new ApiErrorResponse<>(status, message, status.value(), data);
+    }
 }
