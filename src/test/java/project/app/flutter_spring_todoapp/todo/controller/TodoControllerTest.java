@@ -1,6 +1,5 @@
 package project.app.flutter_spring_todoapp.todo.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,29 +7,24 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcResultHandlersDsl;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import project.app.flutter_spring_todoapp.security.oauth2.dto.SessionMember;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
+import project.app.flutter_spring_todoapp.todo.dto.TodoDeleteDto;
 import project.app.flutter_spring_todoapp.todo.dto.request.AddTodoRequest;
 import project.app.flutter_spring_todoapp.todo.dto.request.DeleteTodoRequest;
 import project.app.flutter_spring_todoapp.todo.dto.request.UpdateTodoRequest;
 import project.app.flutter_spring_todoapp.todo.dto.response.*;
+import project.app.flutter_spring_todoapp.todo.service.ReservationService;
 import project.app.flutter_spring_todoapp.todo.service.TodoService;
-import project.app.flutter_spring_todoapp.web.converter.config.WebMvcConfig;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,6 +41,9 @@ TodoControllerTest {
 
     @MockBean
     TodoService todoService;
+
+    @MockBean
+    ReservationService reservationService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -79,7 +76,7 @@ TodoControllerTest {
                 .todoList(todoItemResponseList)
                 .build();
 
-        Mockito.when(todoService.findAll()).thenReturn(response);
+        Mockito.when(todoService.findAll(Mockito.anyLong())).thenReturn(response);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/todos")
@@ -133,7 +130,7 @@ TodoControllerTest {
                 .status(TodoStatus.IN_PROGRESS)
                 .build();
 
-        Mockito.when(todoService.save(Mockito.any(AddTodoRequest.class)))
+        Mockito.when(reservationService.createTodoWithNotification(Mockito.any(AddTodoRequest.class),Mockito.any()))
                         .thenReturn(response);
 
         //when
@@ -188,7 +185,7 @@ TodoControllerTest {
                 .status(TodoStatus.IN_PROGRESS)
                 .build();
 
-        Mockito.when(todoService.save(Mockito.any(AddTodoRequest.class)))
+        Mockito.when(reservationService.createTodoWithNotification(Mockito.any(AddTodoRequest.class),Mockito.any()))
                 .thenReturn(response);
 
         //when
@@ -237,7 +234,7 @@ TodoControllerTest {
                 .status(TodoStatus.IN_PROGRESS)
                 .build();
 
-        Mockito.when(todoService.save(Mockito.any(AddTodoRequest.class)))
+        Mockito.when(reservationService.createTodoWithNotification(Mockito.any(AddTodoRequest.class),Mockito.any()))
                 .thenReturn(response);
 
         //when
@@ -288,7 +285,7 @@ TodoControllerTest {
                 .status(TodoStatus.IN_PROGRESS)
                 .build();
 
-        Mockito.when(todoService.save(Mockito.any(AddTodoRequest.class)))
+        Mockito.when(reservationService.createTodoWithNotification(Mockito.any(AddTodoRequest.class),Mockito.any()))
                 .thenReturn(response);
 
         //when
@@ -337,7 +334,7 @@ TodoControllerTest {
                 .status(TodoStatus.IN_PROGRESS)
                 .build();
 
-        Mockito.when(todoService.save(Mockito.any(AddTodoRequest.class)))
+        Mockito.when(reservationService.createTodoWithNotification(Mockito.any(AddTodoRequest.class),Mockito.any()))
                 .thenReturn(response);
 
         //when
@@ -388,7 +385,7 @@ TodoControllerTest {
                 .status(TodoStatus.IN_PROGRESS)
                 .build();
 
-        Mockito.when(todoService.save(Mockito.any(AddTodoRequest.class)))
+        Mockito.when(reservationService.createTodoWithNotification(Mockito.any(AddTodoRequest.class),Mockito.any()))
                 .thenReturn(response);
 
         //when
@@ -479,7 +476,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -535,7 +532,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -585,7 +582,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -635,7 +632,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -685,7 +682,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -733,7 +730,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -784,7 +781,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -835,7 +832,7 @@ TodoControllerTest {
                 .status(request.getStatus())
                 .build();
 
-        Mockito.when(todoService.update(Mockito.any(UpdateTodoRequest.class)))
+        Mockito.when(reservationService.updateTodoWithNotification(Mockito.any(UpdateTodoRequest.class),Mockito.any(SessionMember.class)))
                 .thenReturn(response);
 
         //when
@@ -866,7 +863,7 @@ TodoControllerTest {
                 .todoId(1L)
                 .build();
 
-        Mockito.when(todoService.removeTodoBy(Mockito.anyLong())).thenReturn(response);
+        Mockito.when(todoService.removeTodoBy(Mockito.any(TodoDeleteDto.class))).thenReturn(response);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos")

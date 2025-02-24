@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import project.app.flutter_spring_todoapp.member.Member;
+import project.app.flutter_spring_todoapp.member.Role;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +22,14 @@ class TodoTest {
     @Test
     void newTodoWithNullStatusAndBetweenStartAndDue(){
         //given
+        Member member = Member.builder()
+                .nickName("nickName")
+                .profile("profile")
+                .email("email")
+                .role(Role.USER)
+                .fcmToken("fcmToken")
+                .build();
+
         LocalDateTime now = LocalDateTime.now();
         //테스트 시각보다 1년 전
         LocalDateTime start = LocalDateTime.of(
@@ -37,7 +47,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus expectedStatus = TodoStatus.IN_PROGRESS; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,start,due, priority);
+        Todo todo = Todo.of(title, description,start,due, priority,member);
 
         //then
         assertThat(todo).isNotNull()
@@ -49,6 +59,14 @@ class TodoTest {
     @Test
     void newTodoWithNullStatusAndBeforeStart(){
         //given
+        Member member = Member.builder()
+                .nickName("nickName")
+                .profile("profile")
+                .email("email")
+                .role(Role.USER)
+                .fcmToken("fcmToken")
+                .build();
+
         LocalDateTime now = LocalDateTime.now();
         //테스트 시각보다 1년 뒤
         LocalDateTime start = LocalDateTime.of(
@@ -66,7 +84,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus expectedStatus = TodoStatus.TODO; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,start,due, priority);
+        Todo todo = Todo.of(title, description,start,due, priority,member);
 
         //then
         assertThat(todo).isNotNull()
@@ -78,6 +96,14 @@ class TodoTest {
     @Test
     void newTodoWithNullStatusAndAfterDue(){
         //given
+        Member member = Member.builder()
+                .nickName("nickName")
+                .profile("profile")
+                .email("email")
+                .role(Role.USER)
+                .fcmToken("fcmToken")
+                .build();
+
         LocalDateTime now = LocalDateTime.now();
         //테스트 시각보다 2년 전
         LocalDateTime start = LocalDateTime.of(
@@ -95,7 +121,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus expectedStatus = TodoStatus.DONE; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,start,due, priority);
+        Todo todo = Todo.of(title, description,start,due, priority, member);
 
         //then
         assertThat(todo).isNotNull()
@@ -107,6 +133,14 @@ class TodoTest {
     @Test
     void newTodo(){
         //given
+        Member member = Member.builder()
+                .nickName("nickName")
+                .profile("profile")
+                .email("email")
+                .role(Role.USER)
+                .fcmToken("fcmToken")
+                .build();
+
         LocalDateTime now = LocalDateTime.now();
         //테스트 시각보다 1년 후
         LocalDateTime due = LocalDateTime.of(
@@ -119,7 +153,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus status = TodoStatus.TODO; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,now,due,status,priority);
+        Todo todo = Todo.of(title, description,now,due,status,priority, member);
 
         //then
         assertThat(todo).isNotNull()
