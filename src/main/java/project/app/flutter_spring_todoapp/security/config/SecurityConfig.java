@@ -19,7 +19,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
                 .oauth2Login((oauth)->oauth
                         .loginPage("/")
                         .userInfoEndpoint((endPoint)->endPoint

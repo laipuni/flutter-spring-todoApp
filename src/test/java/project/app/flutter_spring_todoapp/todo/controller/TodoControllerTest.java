@@ -7,6 +7,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import project.app.flutter_spring_todoapp.security.oauth2.dto.SessionMember;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +52,7 @@ TodoControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @WithMockUser
     @DisplayName("등록된 할일 조회요청 테스트")
     @Test
     void findTodos() throws Exception {
@@ -76,7 +81,7 @@ TodoControllerTest {
                 .todoList(todoItemResponseList)
                 .build();
 
-        Mockito.when(todoService.findAll(Mockito.anyLong())).thenReturn(response);
+        Mockito.when(todoService.findAll(Mockito.any())).thenReturn(response);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/todos")
@@ -96,7 +101,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.todoList[0].status").value("IN_PROGRESS"));
 
     }
-
+    @WithMockUser
     @DisplayName("할일(Todo)을 추가요청 테스트")
     @Test
     void addTodo() throws Exception {
@@ -136,6 +141,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -152,6 +158,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.status").value("IN_PROGRESS"));
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 빈 제목을 받았을 경우 예외가 발생한다.")
     @Test
     void addTodoWithEmptyTitle() throws Exception {
@@ -191,6 +198,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -201,6 +209,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 제한된 길이를 넘은 제목을 받았을 경우 예외가 발생한다.")
     @Test
     void addTodoWithWrongSizeTitle() throws Exception {
@@ -240,6 +249,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -252,6 +262,7 @@ TodoControllerTest {
 
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 시작 날짜가 없을 경우 예외가 발생한다.")
     @Test
     void addTodoWithNullStartDate() throws Exception {
@@ -291,6 +302,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -303,6 +315,7 @@ TodoControllerTest {
 
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 마감 날짜가 없을 경우 예외가 발생한다.")
     @Test
     void addTodoWithNullDueDate() throws Exception {
@@ -340,6 +353,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -352,6 +366,7 @@ TodoControllerTest {
 
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 우선 순위가 없을 경우 예외가 발생한다.")
     @Test
     void addTodoWithNullPriority() throws Exception {
@@ -391,6 +406,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -401,6 +417,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("상세 할일(Todo) 조회요청 테스트")
     @Test
     void detailTodo() throws Exception {
@@ -442,10 +459,14 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.status").value("IN_PROGRESS"));
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청 테스트")
     @Test
     void updateTodo() throws Exception {
         //given
+
+        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
         ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
@@ -482,6 +503,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -498,6 +520,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.status").value("DONE"));
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청 테스트")
     @Test
     void updateTodoWithNullTodoId() throws Exception {
@@ -538,6 +561,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -547,7 +571,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.message").value("수정할 할일의 id는 필수 값 입니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
-
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 할일 제목이 빈칸일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithEmptyTitle() throws Exception {
@@ -588,6 +612,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -598,6 +623,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 잘못된 길이의 제목일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithWrongSizeTitle() throws Exception {
@@ -638,6 +664,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -648,6 +675,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 시작 날짜가 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullStartDate() throws Exception {
@@ -688,6 +716,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -698,6 +727,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 마감 날짜가 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullDueDate() throws Exception {
@@ -736,6 +766,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -746,6 +777,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 우선 순위 값이 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullPriority() throws Exception {
@@ -753,7 +785,6 @@ TodoControllerTest {
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
         ,startDate.getHour(),startDate.getMinute(),startDate.getSecond());
-
 
         String title = "변경된 할일 제목";
         String description = "변경된 할일의 설명";
@@ -787,6 +818,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -797,6 +829,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 일의 상태 값이 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullStatus() throws Exception {
@@ -838,6 +871,7 @@ TodoControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/todos")
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
@@ -848,11 +882,11 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @WithMockUser
     @DisplayName("할일 삭제 요청 테스트")
     @Test
     void removeTodoById() throws Exception {
         //given
-
         DeleteTodoRequest request = DeleteTodoRequest.builder()
                 .todoId(1L)
                 .build();
@@ -863,10 +897,13 @@ TodoControllerTest {
                 .todoId(1L)
                 .build();
 
-        Mockito.when(todoService.removeTodoBy(Mockito.any(TodoDeleteDto.class))).thenReturn(response);
+        Mockito.when(reservationService.removeTodoWithNotification(
+                    Mockito.any(DeleteTodoRequest.class),Mockito.any(SessionMember.class)))
+                .thenReturn(response);
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos")                        .with(csrf())
+                        .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
                 )
