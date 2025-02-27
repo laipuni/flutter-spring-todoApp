@@ -15,10 +15,4 @@ public class MemberController {
 
     private final MemberServiceImpl memberService;
 
-    @PostMapping("/api/v1/member/change-token")
-    public ApiResponse<Object> changeFcmTokenOfMember(@Valid @RequestBody ChangeFcmTokenRequest request){
-        memberService.updateFcmToken(request.getMemberId(), request.getToken());
-        return ApiResponse.ok(null);
-    }
-
 }

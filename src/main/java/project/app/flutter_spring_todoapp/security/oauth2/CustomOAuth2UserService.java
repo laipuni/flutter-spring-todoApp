@@ -22,44 +22,5 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
 
-    public static final String SESSION_MEMBER = "member";
 
-    private final MemberRepository memberRepository;
-    private final HttpSession httpSession;
-
-    @Override
-    public OAuth2User loadUser(final OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
-        ClientRegistration clientRegistration = userRequest.getClientRegistration();
-        String registrationId = clientRegistration.getRegistrationId();
-        String attributeName = clientRegistration.getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
-
-        OAuthAttributes attributes = OAuthAttributes.of(
-                registrationId,
-                attributeName,
-                oAuth2User.getAttributes()
-        );
-
-        Member member = saveOrUpdate(attributes);
-
-        httpSession.setAttribute(SESSION_MEMBER, SessionMember.of(member));
-
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(member.getRoleName())),
-                attributes.getAttributes(),
-                attributes.getAttributesNameKey()
-        );
-    }
-
-    private Member saveOrUpdate(final OAuthAttributes attributes) {
-        Member member = memberRepository.findMemberByEmail(attributes.getEmail())
-                .map(findMember -> findMember.update(
-                        attributes.getUserName(), attributes.getEmail(), attributes.getPicture()
-                ))
-                .orElse(attributes.toEntity());
-
-        return memberRepository.save(member);
-    }
 }

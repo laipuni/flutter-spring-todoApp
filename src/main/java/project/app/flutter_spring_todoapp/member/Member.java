@@ -39,14 +39,25 @@ public class Member {
         this.profile = profile;
     }
 
+    public static Member of(final String nickname, final String email, final String token, final String profile) {
+        return Member.builder()
+                .nickName(nickname)
+                .email(email)
+                .fcmToken(token)
+                .profile(profile)
+                .role(Role.USER)
+                .build();
+    }
+
     public String getRoleName(){
         return this.role.getRoleName();
     }
 
-    public Member update(final String nickName, final String email, final String profile){
+    public Member update(final String nickName, final String email, final String profile, final String token){
         this.nickName = StringUtils.hasText(nickName) ? nickName : this.nickName;
-        this.nickName = StringUtils.hasText(email) ? email : this.email;
-        this.nickName = StringUtils.hasText(profile) ? profile : this.profile;
+        this.email = StringUtils.hasText(email) ? email : this.email;
+        this.profile = StringUtils.hasText(profile) ? profile : this.profile;
+        this.fcmToken = StringUtils.hasText(token) ? token : this.fcmToken;
         return this;
     }
 
