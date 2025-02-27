@@ -7,6 +7,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import project.app.flutter_spring_todoapp.exception.fcm.FailedSendFcmException;
@@ -16,22 +17,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 @Slf4j
-@Component
+@Service
 public class FcmService {
-
-    @PostConstruct
-    public void initialize() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            FileInputStream serviceAccount =
-                    new FileInputStream("src/main/resources/todoapp-3faa2-firebase-adminsdk-fbsvc-cc78a801d0.json");
-
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-
-            FirebaseApp.initializeApp(options);
-        }
-    }
 
     // FCM 알림 전송 메서드
     public void sendNotification(String token, String title, String body) {
