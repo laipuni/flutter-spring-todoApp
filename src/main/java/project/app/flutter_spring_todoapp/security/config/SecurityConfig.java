@@ -34,13 +34,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .oauth2Login((oauth)->oauth
-                        .loginPage("/")
-                        .userInfoEndpoint((endPoint)->endPoint
-                                .userService(customOAuth2UserService) // OAuth2유저의 정보의 EndPoint
-                        )
-                        .defaultSuccessUrl("/")// 로그인이 성공했을 때 redirect url
-                )
+                .authorizeHttpRequests(authentication -> {
+                    authentication.requestMatchers("/api/auth/**").permitAll() // 로그인 관련 url은 허용
+                            .anyRequest().authenticated(); // 나머지 url은 인증이 필요 함
+                })
                 .addFilterBefore(firebaseAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
