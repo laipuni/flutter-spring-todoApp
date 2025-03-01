@@ -35,14 +35,14 @@ public class ReservationService {
         TimeType timeType = request.getTimeType();
         if(TimeType.isSet(timeType)){
             // 할일에 시간을 설정한 경우
-            notificationService.save(NotificationSaveDto.of(todo.getId(), request.getTitle(),request.getDuetDate(),timeType));
+            notificationService.save(NotificationSaveDto.of(todo.getId(), request.getTitle(),request.getDueDate(),timeType));
         }
         return AddTodoResponse.of(todo,timeType);
     }
 
     private static TodoSaveDto createTodoSaveDto(final AddTodoRequest request) {
         return TodoSaveDto.of(request.getTitle(), request.getDescription(), request.getStartDate(),
-                request.getDuetDate(), request.getStatus(), request.getPriority());
+                request.getDueDate(), request.getStatus(), request.getPriority());
     }
 
     @Transactional

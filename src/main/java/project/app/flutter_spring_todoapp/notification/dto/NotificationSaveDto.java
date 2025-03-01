@@ -18,14 +18,14 @@ public class NotificationSaveDto {
 
     private Long todoId;
     private String title;
-    private LocalDateTime duetDate;
+    private LocalDateTime dueDate;
     private TimeType timeType;
 
-    public static NotificationSaveDto of(final Long todoId, final String title, final LocalDateTime duetDate, final TimeType timeType){
+    public static NotificationSaveDto of(final Long todoId, final String title, final LocalDateTime dueDate, final TimeType timeType){
         return NotificationSaveDto.builder()
                 .todoId(todoId)
                 .title(title)
-                .duetDate(duetDate)
+                .dueDate(dueDate)
                 .timeType(timeType)
                 .build();
     }

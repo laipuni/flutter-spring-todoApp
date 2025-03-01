@@ -118,7 +118,7 @@ TodoControllerTest {
                 .title(title)
                 .description(description)
                 .startDate(startDate)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .priority(TodoPriority.MEDIUM)
                 .build();
 
@@ -175,7 +175,7 @@ TodoControllerTest {
                 .title(title)
                 .description(description)
                 .startDate(startDate)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .priority(TodoPriority.MEDIUM)
                 .build();
 
@@ -226,7 +226,7 @@ TodoControllerTest {
                 .title(title)
                 .description(description)
                 .startDate(startDate)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .priority(TodoPriority.MEDIUM)
                 .build();
 
@@ -279,7 +279,7 @@ TodoControllerTest {
                 .title(title)
                 .description(description)
                 .startDate(null)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .priority(TodoPriority.MEDIUM)
                 .build();
 
@@ -330,7 +330,7 @@ TodoControllerTest {
                 .title(title)
                 .description(description)
                 .startDate(startDate)
-                .duetDate(null)
+                .dueDate(null)
                 .priority(TodoPriority.MEDIUM)
                 .build();
 
@@ -383,7 +383,7 @@ TodoControllerTest {
                 .title(title)
                 .description(description)
                 .startDate(startDate)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .priority(null)
                 .build();
 

@@ -79,7 +79,7 @@ class NotificationServiceTest {
         NotificationSaveDto saveDto = NotificationSaveDto.builder()
                 .todoId(todo.getId())
                 .timeType(TimeType.HALF)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .build();
 
         //when
@@ -113,7 +113,7 @@ class NotificationServiceTest {
         NotificationSaveDto saveDto = NotificationSaveDto.builder()
                 .todoId(invalidTodoId)
                 .timeType(TimeType.HALF)
-                .duetDate(dueDate)
+                .dueDate(dueDate)
                 .build();
 
         //when

@@ -73,7 +73,7 @@ class ReservationServiceTest {
                 .title("할일 제목")
                 .description("할일 설명")
                 .startDate(start)
-                .duetDate(due)
+                .dueDate(due)
                 .priority(TodoPriority.MEDIUM)
                 .status(TodoStatus.TODO)
                 .timeType(TimeType.HALF)
@@ -85,7 +85,7 @@ class ReservationServiceTest {
         //then
         assertThat(response).isNotNull()
                 .extracting("title","description", "startDate", "dueDate", "status", "priority", "timeType")
-                .containsExactly(request.getTitle(),request.getDescription(),request.getStartDate(),request.getDuetDate(),request.getStatus(),request.getPriority(),request.getTimeType());
+                .containsExactly(request.getTitle(),request.getDescription(),request.getStartDate(),request.getDueDate(),request.getStatus(),request.getPriority(),request.getTimeType());
         assertThat(notificationList).hasSize(1);
         assertThat(todoList).hasSize(1);
     }
@@ -117,7 +117,7 @@ class ReservationServiceTest {
                 .title("할일 제목")
                 .description("할일 설명")
                 .startDate(start)
-                .duetDate(due)
+                .dueDate(due)
                 .priority(TodoPriority.MEDIUM)
                 .status(TodoStatus.TODO)
                 .timeType(null)
@@ -129,7 +129,7 @@ class ReservationServiceTest {
         //then
         assertThat(response).isNotNull()
                 .extracting("title","description", "startDate", "dueDate", "status", "priority", "timeType")
-                .containsExactly(request.getTitle(),request.getDescription(),request.getStartDate(),request.getDuetDate(),request.getStatus(),request.getPriority(),TimeType.NONE);
+                .containsExactly(request.getTitle(),request.getDescription(),request.getStartDate(),request.getDueDate(),request.getStatus(),request.getPriority(),TimeType.NONE);
         assertThat(notificationList).hasSize(0);
         assertThat(todoList).hasSize(1);
     }
