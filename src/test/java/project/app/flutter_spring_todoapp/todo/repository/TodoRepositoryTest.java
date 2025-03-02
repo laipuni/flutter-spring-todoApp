@@ -10,11 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.member.Role;
 import project.app.flutter_spring_todoapp.member.repository.MemberRepository;
+import project.app.flutter_spring_todoapp.notification.Notification;
+import project.app.flutter_spring_todoapp.notification.TimeType;
+import project.app.flutter_spring_todoapp.notification.repository.NotificationRepository;
 import project.app.flutter_spring_todoapp.todo.domain.Todo;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
+import project.app.flutter_spring_todoapp.todo.dto.response.DetailTodoResponse;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.groups.Tuple.tuple;
@@ -30,6 +35,8 @@ class TodoRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @DisplayName("현재 유저의 할일들을 조회한다.")
     @Test
@@ -65,6 +72,93 @@ class TodoRepositoryTest {
                         tuple("할일 이름2","할일 설명2"),
                         tuple("할일 이름1","할일 설명1")
                         );
+    }
+
+    @DisplayName("Todo와 notification의 timeType을 Dto로 조회한다.")
+    @Test
+    void findTodoDetailByTodoId(){
+        //given
+        String email = "email@email.com";
+        String nickName = "닉네임";
+        String profile = "profile";
+        Member member = Member.builder()
+                .nickName(nickName)
+                .role(Role.USER)
+                .email(email)
+                .profile(profile)
+                .build();
+        memberRepository.save(member);
+
+        LocalDateTime startDate = LocalDateTime.of(2025,3,1
+                ,11,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+                ,startDate.getHour(),startDate.getMinute(),0,0);
+
+        Todo todo = createTodo(member, startDate, dueDate, 1);
+        todoRepository.save(todo);
+
+        Notification notification =Notification.builder()
+                .title(todo.getTitle())
+                .content(todo.getDescription())
+                .member(member)
+                .todo(todo)
+                .dueTime(dueDate)
+                .timeType(TimeType.HALF)
+                .build();
+        notificationRepository.save(notification);
+        //when
+        DetailTodoResponse result = todoRepository.findTodoDetailByTodoId(todo.getId()).get();
+        //then
+        Assertions.assertThat(result).isNotNull()
+                .extracting(
+                        "title", "description",
+                        "startDate", "dueDate", "status",
+                        "priority","timeType")
+                .containsExactlyInAnyOrder(todo.getTitle(),todo.getDescription(),
+                        todo.getStartDate(),
+                        todo.getDueDate(),
+                        todo.getStatus(),
+                        todo.getPriority(),notification.getTimeType());
+
+    }
+
+    @DisplayName("Todo와 notification의 timeType을 Dto로 조회한다.")
+    @Test
+    void findTodoDetailByTodoIdWithNotExistNotification(){
+        //given
+        String email = "email@email.com";
+        String nickName = "닉네임";
+        String profile = "profile";
+        Member member = Member.builder()
+                .nickName(nickName)
+                .role(Role.USER)
+                .email(email)
+                .profile(profile)
+                .build();
+        memberRepository.save(member);
+
+        LocalDateTime startDate = LocalDateTime.of(2025,3,1
+                ,11,0,0,0);
+        LocalDateTime dueDate = LocalDateTime.of(startDate.getYear() + 1,startDate.getMonth(),startDate.getDayOfMonth()
+                ,startDate.getHour(),startDate.getMinute(),0,0);
+
+        Todo todo = createTodo(member, startDate, dueDate, 1);
+        todoRepository.save(todo);
+
+        //when
+        DetailTodoResponse result = todoRepository.findTodoDetailByTodoId(todo.getId()).get();
+        //then
+        Assertions.assertThat(result).isNotNull()
+                .extracting(
+                        "title", "description",
+                        "startDate", "dueDate", "status",
+                        "priority","timeType")
+                .containsExactlyInAnyOrder(todo.getTitle(),todo.getDescription(),
+                        todo.getStartDate(),
+                        todo.getDueDate(),
+                        todo.getStatus(),
+                        todo.getPriority(),TimeType.NONE);
+
     }
 
     private static Todo createTodo(final Member member, final LocalDateTime startDate, final LocalDateTime dueDate,final int num) {
