@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:todo_app/service/SecureStorageService.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -22,13 +23,22 @@ class AuthService {
     );
 
     UserCredential userCredential = await _auth.signInWithCredential(credential);
-    return userCredential.user;
+    final User? user = userCredential.user;
+    if (user != null) {
+      final String? idToken = await user.getIdToken();
+      final String? refreshToken = userCredential.credential?.accessToken; // 🔹 Firebase는 refresh_token을 accessToken에 저장
+
+      if (idToken != null && refreshToken != null) {
+        await SecureStorageService().saveAccessToken(idToken);
+        await SecureStorageService().saveRefreshToken(refreshToken);
+      }
+    }
+    return user;
   }
 
   /// 🔹 Firebase ID 토큰 + FCM 토큰을 백엔드로 전송
   Future<void> sendTokenToBackend(String? idToken, String? fcmToken) async {
     if (idToken == null) return;
-
     final response = await http.post(
       Uri.parse("http://10.0.2.2:8080/api/auth/google"),
       headers: {
@@ -37,7 +47,6 @@ class AuthService {
       },
       body: jsonEncode({'token': fcmToken}),
     );
-
     if (response.statusCode == 200) {
       print("백엔드 로그인 성공: ${response.body}");
     } else {
@@ -45,8 +54,15 @@ class AuthService {
     }
   }
 
+  //  SharedPreferencesService를 사용하여 로그인 여부 확인
+  static Future<bool> isAuthenticated() async {
+    String? token = await SecureStorageService().getAccessToken();
+    return token != null;
+  }
+
   /// 🔹 로그아웃 기능
   Future<void> signOut() async {
+    await SecureStorageService().clearTokens();
     await _googleSignIn.signOut();
     await _auth.signOut();
   }
