@@ -85,7 +85,7 @@ public class Notification {
         return this.member.getId().equals(writerId);
     }
     private static String createNotificationTitle(final String todoTitle, final TimeType timeType){
-        return String.format("\"%s\"가 %s 남았습니다.", todoTitle, timeType.getTime());
+        return String.format("\"%s\"가 %s 남았습니다.", todoTitle, timeType.getDescription());
     }
 
     private static String createNotificationContent(){
