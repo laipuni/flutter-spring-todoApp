@@ -1,5 +1,6 @@
 package project.app.flutter_spring_todoapp.todo.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +19,9 @@ public enum TodoStatus {
     private final static Map<String,TodoStatus> statusMap = Arrays.stream(TodoStatus.values())
             .collect(Collectors.toMap(TodoStatus::getName,value -> value));
 
+    @JsonCreator
     public static TodoStatus findStatus(final String source) {
-        return statusMap.get(source);
+        return statusMap.get(source.toLowerCase());
     }
 
     public String getName() {

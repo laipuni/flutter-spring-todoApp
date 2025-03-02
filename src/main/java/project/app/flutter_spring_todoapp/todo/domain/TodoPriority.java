@@ -1,5 +1,6 @@
 package project.app.flutter_spring_todoapp.todo.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +19,9 @@ public enum TodoPriority {
     private final static Map<String,TodoPriority> priorityMap = Arrays.stream(TodoPriority.values())
             .collect(Collectors.toMap(TodoPriority::getName, value -> value));
 
+    @JsonCreator
     public static TodoPriority findPriority(final String source) {
-        return priorityMap.get(source);
+        return priorityMap.get(source.toLowerCase());
     }
 
     public String getName() {
