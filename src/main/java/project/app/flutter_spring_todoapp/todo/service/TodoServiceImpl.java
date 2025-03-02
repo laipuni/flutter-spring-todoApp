@@ -26,11 +26,11 @@ public class TodoServiceImpl implements TodoService{
 
     @Transactional
     @Override
-    public Todo save(final TodoSaveDto todoServiceDto, final Long MemberId) {
-        Member member = memberRepository.findById(MemberId)
+    public Todo save(final TodoSaveDto todoServiceDto, final Long memberId) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
         Todo todo = todoRepository.save(todoServiceDto.toEntity(member));
-        log.info("할일(id:{}) \"{}\"을 생성했다",todo.getId(),todo.getTitle());
+        log.info("사용자(id:{})가 할일(id:{}) \"{}\"을 생성했다",memberId, todo.getId(),todo.getTitle());
         return todo;
     }
 
@@ -59,9 +59,8 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     public DetailTodoResponse detailTodo(final Long todoId) {
-        Todo todo = todoRepository.findById(todoId)
+        return todoRepository.findTodoDetailByTodoId(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 할일은 존재하지 않습니다."));
-        return DetailTodoResponse.of(todo);
     }
 
     @Transactional
