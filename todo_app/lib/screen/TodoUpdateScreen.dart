@@ -13,14 +13,14 @@ import 'package:todo_app/util/DateTimeUtils.dart';
 
 import '../HostName.dart';
 
-class BoardUpdateScreen extends StatefulWidget{
-  const BoardUpdateScreen({super.key});
+class TodoUpdateScreen extends StatefulWidget{
+  const TodoUpdateScreen({super.key});
 
   @override
-  State<BoardUpdateScreen> createState() => _BoardUpdateScreenState();
+  State<TodoUpdateScreen> createState() => _TodoUpdateScreenState();
 }
 
-class _BoardUpdateScreenState extends State<BoardUpdateScreen> {
+class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
   final SecureStorageService secureStorageService = SecureStorageService();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();

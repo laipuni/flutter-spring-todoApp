@@ -10,14 +10,14 @@ import 'package:todo_app/http/HttpInterceptor.dart';
 import 'package:todo_app/service/SecureStorageService.dart';
 import 'package:todo_app/util/DateTimeUtils.dart';
 
-class BoardAddScreen extends StatefulWidget {
-  const BoardAddScreen({super.key});
+class TodoAddScreen extends StatefulWidget {
+  const TodoAddScreen({super.key});
 
   @override
-  State<BoardAddScreen> createState() => _BoardAddScreenState();
+  State<TodoAddScreen> createState() => _TodoAddScreenState();
 }
 
-class _BoardAddScreenState extends State<BoardAddScreen> {
+class _TodoAddScreenState extends State<TodoAddScreen> {
   final SecureStorageService secureStorageService = SecureStorageService();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();

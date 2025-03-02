@@ -10,12 +10,12 @@ import 'package:todo_app/service/SharedPreferencesService.dart';
 import 'package:http/http.dart' as http;
 import 'package:todo_app/util/DateTimeUtils.dart';
 
-class BoardScreen extends StatefulWidget {
+class TodoScreen extends StatefulWidget {
   @override
-  _BoardScreenState createState() => _BoardScreenState();
+  _TodoScreenState createState() => _TodoScreenState();
 }
 
-class _BoardScreenState extends State<BoardScreen> {
+class _TodoScreenState extends State<TodoScreen> {
   List<TodoView> _todoList = [];
   bool _isLoading = true;
   final SecureStorageService _secureStorageService = SecureStorageService();

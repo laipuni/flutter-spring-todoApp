@@ -8,14 +8,14 @@ import 'package:todo_app/model/Todo.dart';
 import 'package:todo_app/service/SecureStorageService.dart';
 import 'package:todo_app/util/DateTimeUtils.dart';
 
-class BoardDetailScreen extends StatefulWidget {
-  const BoardDetailScreen({super.key});
+class TodoDetailScreen extends StatefulWidget {
+  const TodoDetailScreen({super.key});
 
   @override
-  State<BoardDetailScreen> createState() => _BoardDetailScreenState();
+  State<TodoDetailScreen> createState() => _TodoDetailScreenState();
 }
 
-class _BoardDetailScreenState extends State<BoardDetailScreen> {
+class _TodoDetailScreenState extends State<TodoDetailScreen> {
   TodoDetail? todoDetail;
   final SecureStorageService secureStorageService = SecureStorageService();
 
