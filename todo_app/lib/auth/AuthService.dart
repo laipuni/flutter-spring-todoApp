@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:todo_app/HostName.dart';
 import 'dart:convert';
 
 import 'package:todo_app/service/SecureStorageService.dart';
@@ -40,7 +41,7 @@ class AuthService {
   Future<void> sendTokenToBackend(String? idToken, String? fcmToken) async {
     if (idToken == null) return;
     final response = await http.post(
-      Uri.parse("http://10.0.2.2:8080/api/auth/google"),
+      Uri.parse("${HostName.host}/api/auth/google"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $idToken',
