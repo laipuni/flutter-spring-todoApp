@@ -46,18 +46,17 @@ class PushNotification{
   static Future<void> showNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'high_importance_channel', // 채널 ID
-      '테스트 알림', // 채널 이름
+      'foreground_notification_channel', // 채널 이름
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
       icon: 'mipmap/ic_launcher',
     );
 
-
     const NotificationDetails platformDetails =
     NotificationDetails(android: androidDetails);
 
-    int notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000; // ✅ Unique ID 사용
+    int notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
     await _flutterLocalNotificationsPlugin.show(
       notificationId,
