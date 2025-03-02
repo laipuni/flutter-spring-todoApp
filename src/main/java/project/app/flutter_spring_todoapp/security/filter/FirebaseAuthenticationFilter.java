@@ -21,6 +21,7 @@ import project.app.flutter_spring_todoapp.exception.fcm.FailedFirebaseInitExcept
 import project.app.flutter_spring_todoapp.exception.global.LoginRequiredException;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.member.repository.MemberRepository;
+import project.app.flutter_spring_todoapp.security.oauth2.dto.SessionMember;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
         );
         //SecurityContext에 사용자 정보 저장
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(member.getEmail(), null, authorities);
+                new UsernamePasswordAuthenticationToken(SessionMember.of(member), null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

@@ -1,7 +1,6 @@
 package project.app.flutter_spring_todoapp.web.config;
 
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
@@ -12,14 +11,10 @@ import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
 import project.app.flutter_spring_todoapp.web.converter.*;
 import project.app.flutter_spring_todoapp.web.resolver.SessionMemberArgumentResolver;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-
-    @Autowired
-    HttpSession httpSession;
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
@@ -35,7 +30,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     public HandlerMethodArgumentResolver sessionMemberArgumentResolver(){
-        return new SessionMemberArgumentResolver(httpSession);
+        return new SessionMemberArgumentResolver();
     }
 
     public Converter<TodoStatus, String> todoStatusToStringConverter(){
