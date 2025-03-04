@@ -17,3 +17,10 @@
 ## 로그인(Spring security, firebase auth)
 <img src="https://github.com/user-attachments/assets/8985cc61-dc77-4f56-b244-3234ad1da8f3" width="500">
 
+
+## 알림(firebase cloud messaging, redis ttl)
+### 앱이 포그라운드 상태일 때 알림 발생
+[포그라운드 알림.webm](https://github.com/user-attachments/assets/f939cfaf-6945-4d5c-bb5b-38094f5a8735)
+
+### 앱이 백그라운드 상태일 때 알림 발생
+[백그라운드 알림.webm](https://github.com/user-attachments/assets/282a2e35-c054-4c1e-8e03-4581a37307ef)
