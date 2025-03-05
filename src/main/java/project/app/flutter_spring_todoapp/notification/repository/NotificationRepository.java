@@ -11,6 +11,9 @@ import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
+    @Query("select n from Notification n join fetch n.member where n.todo.id = :todoId")
+    Optional<Notification> findNotificationWithMemberByTodoId (@Param("todoId") Long todoId);
+
     @Query("select n from Notification n where n.todo.id = :todoId")
     Optional<Notification> findNotificationByTodoId(@Param("todoId") Long todoId);
 

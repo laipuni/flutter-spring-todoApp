@@ -62,4 +62,12 @@ public class NotificationService {
         notificationRepository.deleteAllByTodoId(removeDto.getTodoId());
         log.info("사용자 (id : {})는 알림(id : {})을 제거했다.",removeDto.getDeleterId(),notification.getId());
     }
+
+    public Notification findByTodoId(final Long todoId) {
+        return notificationRepository.findNotificationWithMemberByTodoId (todoId)
+                .orElseThrow(() -> {
+                    log.debug("해당 할일(id : {})의 알림은 존재하지 않습니다.",todoId);
+                    throw new IllegalArgumentException("해당 알림은 존재하지 않습니다.");
+                });
+    }
 }
