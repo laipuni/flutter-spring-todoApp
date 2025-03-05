@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.member.Role;
@@ -12,6 +13,7 @@ import project.app.flutter_spring_todoapp.member.repository.MemberRepository;
 import project.app.flutter_spring_todoapp.notification.Notification;
 import project.app.flutter_spring_todoapp.notification.TimeType;
 import project.app.flutter_spring_todoapp.notification.repository.NotificationRepository;
+import project.app.flutter_spring_todoapp.redis.RedisService;
 import project.app.flutter_spring_todoapp.security.oauth2.dto.SessionMember;
 import project.app.flutter_spring_todoapp.todo.domain.Todo;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
@@ -46,6 +48,10 @@ class ReservationServiceTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @MockBean
+    RedisService redisService;
+
     @DisplayName("예약할 때 할일과 알림을 같이 저장한다.")
     @Test
     void createTodoWithNotification(){
@@ -243,6 +249,17 @@ class ReservationServiceTest {
                 .status(status)
                 .build();
         todoRepository.save(todo);
+
+        TimeType fifteen = TimeType.FIFTEEN;
+        Notification notification = Notification.builder()
+                .member(member)
+                .todo(todo)
+                .dueTime(due)
+                .timeType(fifteen)
+                .title("\"" + title + "\"이" + fifteen.getTime() + " 남았습니다.")
+                .content("해당 알림을 탭하시면 자세히 볼 수 있어요!")
+                .build();
+        notificationRepository.save(notification);
 
         UpdateTodoRequest request = UpdateTodoRequest.builder()
                 .todoId(todo.getId())
