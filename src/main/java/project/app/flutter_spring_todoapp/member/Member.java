@@ -19,7 +19,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(unique = true)
+    @Column(unique = true,nullable = false)
     private String fcmToken;
 
     @Column(nullable = false, length = 20, unique = true)

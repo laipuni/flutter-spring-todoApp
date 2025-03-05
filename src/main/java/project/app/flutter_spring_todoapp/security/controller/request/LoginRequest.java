@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginRequest {
 
-    @NotBlank
+    @NotBlank(message = "로그인에 실패하였습니다.")
     private String token;
 }

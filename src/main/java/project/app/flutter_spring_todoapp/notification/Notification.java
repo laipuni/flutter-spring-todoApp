@@ -102,4 +102,12 @@ public class Notification {
             this.timeType = timeType;
         }
     }
+
+    public boolean changeTimeType(final TimeType timeType) {
+        return !this.timeType.equals(timeType);
+    }
+
+    public boolean changeDueDate(final LocalDateTime dueDate) {
+        return !this.dueTime.isEqual(dueDate);
+    }
 }
