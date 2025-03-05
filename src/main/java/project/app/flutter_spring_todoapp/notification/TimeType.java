@@ -13,16 +13,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum TimeType {
 
-    NONE("설정 없음","none"),
-    FIVE("5분","five"),
-    FIFTEEN("15분","fifteen"),
-    HALF("30분","half"),
-    HOUR("1시간","hour");
+    NONE("설정 없음","none",0L),
+    FIVE("5분","five",5L),
+    FIFTEEN("15분","fifteen",15L),
+    HALF("30분","half",30L),
+    HOUR("1시간","hour",60L);
 
     final String description;
-    final String time;
+    final String name;
+    final Long time;
     final static Map<String, TimeType> timeTypeMap = Arrays.stream(TimeType.values())
-            .collect(Collectors.toMap(TimeType::getTime, value -> value));
+            .collect(Collectors.toMap(TimeType::getName, value -> value));
 
     @JsonCreator
     public static TimeType findTimeType(final String source) {
