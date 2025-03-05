@@ -28,7 +28,10 @@ public class TodoServiceImpl implements TodoService{
     @Override
     public Todo save(final TodoSaveDto todoServiceDto, final Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    log.trace("사용자(id : {})가 존재하지 않습니다.",memberId);
+                    return new IllegalArgumentException("해당 할일은 존재하지 않습니다.");
+                });
         Todo todo = todoRepository.save(todoServiceDto.toEntity(member));
         log.info("사용자(id:{})가 할일(id:{}) \"{}\"을 생성했다",memberId, todo.getId(),todo.getTitle());
         return todo;
@@ -43,7 +46,10 @@ public class TodoServiceImpl implements TodoService{
     @Override
     public Todo update(final TodoUpdateDto request) {
         Todo todo = todoRepository.findById(request.getTodoId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 할일은 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    log.trace("알림(id : {})은 존재하지 않습니다.",request.getTodoId());
+                    return new IllegalArgumentException("해당 할일은 존재하지 않습니다.");
+                });
         if(!todo.isWriter(request.getUpdaterId())){
             log.debug("사용자(id :{})는 할일(id : {})를 삭제할 권한이 없다", request.getUpdaterId(), request.getTodoId());
             throw new UnAuthorizationException("할일을 제거할 권한이 없습니다.");
@@ -60,7 +66,10 @@ public class TodoServiceImpl implements TodoService{
     @Override
     public DetailTodoResponse detailTodo(final Long todoId) {
         return todoRepository.findTodoDetailByTodoId(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 할일은 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    log.trace("알림(id : {})은 존재하지 않습니다.",todoId);
+                    return new IllegalArgumentException("해당 할일은 존재하지 않습니다.");
+                });
     }
 
     @Transactional
@@ -69,7 +78,10 @@ public class TodoServiceImpl implements TodoService{
         Long todoId = deleteDto.getTodoId();
         Long deleterId = deleteDto.getDeleterId();
         Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 할일은 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    log.trace("알림(id : {})은 존재하지 않습니다.",todoId);
+                    return new IllegalArgumentException("해당 할일은 존재하지 않습니다.");
+                });
         if(!todo.isWriter(deleterId)){
             log.debug("사용자(id :{})는 할일(id : {})를 삭제할 권한이 없다", deleterId, todoId);
             throw new UnAuthorizationException("할일을 제거할 권한이 없습니다.");
