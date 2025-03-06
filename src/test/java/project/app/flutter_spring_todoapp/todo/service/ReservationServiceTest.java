@@ -213,7 +213,7 @@ class ReservationServiceTest {
         assertThat(todoList).hasSize(1);
     }
 
-    @DisplayName("예약한 할일을 수정하고, 알림을 생성한다.")
+    @DisplayName("기존에 알림이 없던 할 일에 알림을 설정하면, 새로운 알림이 생성된다")
     @Test
     void updateTodoAndCreateNotification(){
         //given
@@ -251,15 +251,6 @@ class ReservationServiceTest {
         todoRepository.save(todo);
 
         TimeType fifteen = TimeType.FIFTEEN;
-        Notification notification = Notification.builder()
-                .member(member)
-                .todo(todo)
-                .dueTime(due)
-                .timeType(fifteen)
-                .title("\"" + title + "\"이" + fifteen.getTime() + " 남았습니다.")
-                .content("해당 알림을 탭하시면 자세히 볼 수 있어요!")
-                .build();
-        notificationRepository.save(notification);
 
         UpdateTodoRequest request = UpdateTodoRequest.builder()
                 .todoId(todo.getId())

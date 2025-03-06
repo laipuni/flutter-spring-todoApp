@@ -57,9 +57,9 @@ public class ReservationService {
     @Transactional
     public UpdateTodoResponse updateTodoWithNotification(final UpdateTodoRequest request, final SessionMember sessionMember){
         Todo todo = todoService.update(createUpdateTodoReqeust(request, sessionMember.getMemberSeq()));
-        Notification notification = notificationService.findByTodoId(request.getTodoId());
+        boolean existNotificationForTodo = notificationService.hasNotificationForTodo(request.getTodoId());
         boolean hasNotification = TimeType.isSet(request.getTimeType());
-        handleNotificationChanges(request,notification, hasNotification, sessionMember.getMemberSeq());
+        handleNotificationChanges(request,existNotificationForTodo, hasNotification, sessionMember.getMemberSeq());
         return UpdateTodoResponse.of(todo);
     }
 
@@ -68,33 +68,28 @@ public class ReservationService {
                 request.getStartDate(), request.getDueDate(), request.getPriority(), request.getStatus(),updaterId);
     }
 
-    private void handleNotificationChanges(final UpdateTodoRequest request, final Notification notification,
+    private void handleNotificationChanges(final UpdateTodoRequest request, final boolean existNotificationForTodo,
                                            final boolean hasNotification, final Long memberId) {
-        if (notification == null && hasNotification) {
+        if (!existNotificationForTodo && hasNotification) {
             // 알림 X -> 알림 O (알림 추가)
             saveNotificationWithReminder(request);
-        } else if (notification != null && !hasNotification) {
+        } else if (existNotificationForTodo && !hasNotification) {
             // 알림 O -> 알림 X (알림 제거)
-            removeNotificationWithReminder(notification, request.getTodoId(), memberId);
-        } else if (notification != null) {
+            removeNotificationWithReminder(request.getTodoId(), memberId);
+        } else {
             // 알림 O -> 알림 O (알림 내용 변경)
-            updateNotificationWithReminder(request, notification, memberId);
+            updateNotificationWithReminder(request, memberId);
         }
     }
 
-    private void updateNotificationWithReminder(final UpdateTodoRequest request, final Notification notification, final Long memberId) {
+    private void updateNotificationWithReminder(final UpdateTodoRequest request,final Long memberId) {
+        Notification notification = notificationService.findByTodoId(request.getTodoId());
         notificationService.update(NotificationUpdateDto.of(request.getTodoId(), request.getTitle(), request.getTimeType(), memberId));
         if(notification.changeTimeType(request.getTimeType()) || notification.changeDueDate(request.getDueDate())){
             //알림 시간 타입 or 마감 시간을 변경 했을 경우
             //redis에 ttl key 제거 후, 생성
             redisService.updateReminder(ReminderMessage.of(notification));
         }
-    }
-
-    private void removeNotificationWithReminder(final Notification notification, final Long todoId, final Long memberId) {
-        redisService.deleteReminder(notification.getId());
-        //redis에 ttl key 제거
-        notificationService.removeNotificationByTodoId(NotificationRemoveDto.of(todoId, memberId));
     }
 
     private void saveNotificationWithReminder(final UpdateTodoRequest request) {
@@ -107,10 +102,16 @@ public class ReservationService {
 
     @Transactional
     public DeleteTodoResponse removeTodoWithNotification(final DeleteTodoRequest request, final SessionMember sessionMember){
-        Notification notification = notificationService.findByTodoId(request.getTodoId());
         //redis에 저장된 ttl 알림 제거
-        removeNotificationWithReminder(notification, request.getTodoId(), sessionMember.getMemberSeq());
+        removeNotificationWithReminder(request.getTodoId(), sessionMember.getMemberSeq());
         todoService.removeTodoBy(TodoDeleteDto.of(request.getTodoId(),sessionMember.getMemberSeq()));
         return DeleteTodoResponse.of(request.getTodoId());
+    }
+
+    private void removeNotificationWithReminder(final Long todoId, final Long memberId) {
+        Notification notification = notificationService.findByTodoId(todoId);
+        redisService.deleteReminder(notification.getId());
+        //redis에 ttl key 제거
+        notificationService.removeNotificationByTodoId(NotificationRemoveDto.of(todoId, memberId));
     }
 }
