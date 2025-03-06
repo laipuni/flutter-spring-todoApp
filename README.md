@@ -24,3 +24,7 @@
 
 ### 앱이 백그라운드 상태일 때 알림 발생
 [백그라운드 알림.webm](https://github.com/user-attachments/assets/282a2e35-c054-4c1e-8e03-4581a37307ef)
+
+## 서버,클라이언트 에러 페이지
+<img src="https://github.com/user-attachments/assets/dd4d6a1c-37a4-4c20-839e-ddd7fdfa19e6" width="500">
+<img src="https://github.com/user-attachments/assets/2f319230-17c4-48f8-b97d-9e2ef29830b5" width="500">
