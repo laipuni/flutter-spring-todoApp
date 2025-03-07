@@ -17,4 +17,9 @@ class DateTimeUtils{
     String minutes = dateTime.minute.toString();
     return "$year-$month-$day $hour:$minutes";
   }
+
+  static DateTime getKoreaNow(){
+    //UTC (영국 천문대를 기준)에서 9시간을 더하면 한국 시간
+    return DateTime.now().toLocal().add(Duration(hours: 9));
+  }
 }

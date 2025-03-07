@@ -26,8 +26,8 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
   TodoStatus _selectedStatus = TodoStatus.todo;
   TodoPriority _selectedPriority = TodoPriority.LOW;
 
-  DateTime selectedStartDateTime = DateTime.now();
-  DateTime selectedDueDateTime = DateTime.now();
+  DateTime selectedStartDateTime = DateTimeUtils.getKoreaNow();
+  DateTime selectedDueDateTime = DateTimeUtils.getKoreaNow();
   bool _isLoading = false; // 로딩 상태 추가
 
   void _selectDateTime(Function(DateTime) onDateSelected) {
@@ -37,7 +37,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       minTime: DateTime(2000, 1, 1),
       maxTime: DateTime(2100, 12, 31),
       onConfirm: onDateSelected,
-      currentTime: DateTime.now(),
+      currentTime: DateTimeUtils.getKoreaNow(),
       locale: LocaleType.ko,
     );
   }
@@ -83,15 +83,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
 
     if (response["code"]?.toString() == "200") {
       Navigator.pushReplacementNamed(context, RouteName.home);
-    } else if(response["code"]?.toString() == "400"){
-      _showSnackBar(response["message"]?.toString());
     }
-  }
-
-  void _showSnackBar(String? message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message!), duration: Duration(seconds: 2)),
-    );
   }
 
   @override
@@ -101,6 +93,11 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
         title: Text("할 일 추가", style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+              onPressed: () => {Navigator.pushReplacementNamed(context, RouteName.home)},
+              icon: Icon(Icons.home))
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator()) // 🔄 로딩 중 표시

@@ -4,10 +4,9 @@ import 'package:todo_app/HostName.dart';
 import 'package:todo_app/RouteName.dart';
 import 'package:todo_app/auth/AuthService.dart';
 import 'package:todo_app/enum/TodoStatus.dart';
+import 'package:todo_app/http/HttpInterceptor.dart';
 import 'package:todo_app/model/Todo.dart';
 import 'package:todo_app/service/SecureStorageService.dart';
-import 'package:todo_app/service/SharedPreferencesService.dart';
-import 'package:http/http.dart' as http;
 import 'package:todo_app/util/DateTimeUtils.dart';
 
 class TodoScreen extends StatefulWidget {
@@ -30,20 +29,18 @@ class _TodoScreenState extends State<TodoScreen> {
     var url = Uri.parse("${HostName.host}/api/todos");
     String? idToken = await _secureStorageService.getAccessToken();
 
-    http.Response response = await http.get(
+    Map<String, dynamic> response = await HttpInterceptor(context).get(
       url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $idToken',
-      },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
     );
-
     setTodoList(response);
   }
 
-  void setTodoList(http.Response response) {
-    Map<String, dynamic> responseMap = json.decode(response.body);
-    List<dynamic> todosJson = responseMap["data"]["todoList"];
+  void setTodoList(Map<String, dynamic> response) {
+    List<dynamic> todosJson = response["data"]["todoList"];
 
     setState(() {
       _todoList = todosJson.map((todo) => TodoView.fromJson(todo)).toList();
@@ -82,7 +79,7 @@ class _TodoScreenState extends State<TodoScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.pushNamed(context, RouteName.todoAdd),
+        onPressed: () => Navigator.pushReplacementNamed(context, RouteName.todoAdd),
         icon: Icon(Icons.add),
         label: Text("추가하기"),
         backgroundColor: Colors.blueAccent,
@@ -116,7 +113,7 @@ class _TodoScreenState extends State<TodoScreen> {
         ),
         trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[600]),
         onTap: () {
-          Navigator.pushNamed(context, RouteName.todoDetail, arguments: todo.id);
+          Navigator.pushReplacementNamed(context, RouteName.todoDetail, arguments: todo.id);
         },
       ),
     );

@@ -19,7 +19,6 @@ class PushNotification{
     );
 
     _token = await _firebaseMessaging.getToken();
-    print("FCM Token: $_token");
     return _token;
   }
 

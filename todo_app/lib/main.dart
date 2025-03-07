@@ -41,13 +41,18 @@ void handlePushNotification(RemoteMessage message) {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  String token = await PushNotification.init();
-  _sharedPreferencesService.saveFcmToken(token);
+  await saveFcmToken();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   setupInteractedMessage();
   // Foreground 푸시 알림 처리
   FirebaseMessaging.onMessage.listen(handlePushNotification);
   runApp(_MyApp());
+}
+
+Future<void> saveFcmToken() async {
+  _sharedPreferencesService.init();
+  String token = await PushNotification.init();
+  _sharedPreferencesService.saveFcmToken(token);
 }
 
 class _MyApp extends StatelessWidget {

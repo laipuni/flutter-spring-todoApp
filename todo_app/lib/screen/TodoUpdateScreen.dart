@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:todo_app/RouteName.dart';
 import 'package:todo_app/enum/ReminderTime.dart';
 import 'package:todo_app/enum/TodoPriority.dart';
 import 'package:todo_app/enum/TodoStatus.dart';
@@ -29,8 +30,8 @@ class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
   TodoStatus _selectedStatus = TodoStatus.todo;
   TodoPriority _selectedPriority = TodoPriority.LOW;
 
-  DateTime selectedStartDateTime = DateTime.now();
-  DateTime selectedDueDateTime = DateTime.now();
+  DateTime? selectedStartDateTime;
+  DateTime? selectedDueDateTime;
   bool _isLoading = true;
   TodoDetail? todoDetail;
 
@@ -80,15 +81,15 @@ class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
 
   Future<void> updateTodo() async {
     setState(() => _isLoading = true);
-
     var url = Uri.parse("${HostName.host}/api/todos");
     String? idToken = await secureStorageService.getAccessToken();
 
     var data = {
+      "todoId": todoDetail!.id,
       "title": titleController.text,
       "description": descriptionController.text,
-      "startDate": selectedStartDateTime.toIso8601String(),
-      "dueDate": selectedDueDateTime.toIso8601String(),
+      "startDate": selectedStartDateTime!.toIso8601String(),
+      "dueDate": selectedDueDateTime!.toIso8601String(),
       "priority": _selectedPriority.value,
       "status": _selectedStatus.value,
       "timeType": _selectedTime.value
@@ -103,17 +104,13 @@ class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
       body: jsonEncode(data),
     );
 
+    setState(() => _isLoading = false);
     if (response["code"]?.toString() == "200") {
-      Navigator.of(context).pop();
-    } else if(response["code"]?.toString() == "400"){
-      _showSnackBar(response["message"]?.toString());
+      Navigator.pushReplacementNamed(context,
+          RouteName.todoDetail,
+          arguments: todoDetail!.id
+      );
     }
-  }
-
-  void _showSnackBar(String? message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message!), duration: Duration(seconds: 2)),
-    );
   }
 
   @override
@@ -123,6 +120,10 @@ class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
         title: Text("할일 수정", style: TextStyle(fontSize : 20, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(onPressed: () => Navigator.pushReplacementNamed(context, RouteName.todoDetail,
+              arguments: todoDetail!.id), icon: Icon(Icons.home))
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator()) // 🔄 로딩 중 표시
@@ -135,8 +136,8 @@ class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
             SizedBox(height: 16),
             _buildTextField(descriptionController, "내용"),
             SizedBox(height: 16),
-            _buildDatePicker("시작 시간", selectedStartDateTime, setStartDateTime),
-            _buildDatePicker("마감 시간", selectedDueDateTime, setDueDateTime),
+            _buildDatePicker("시작 시간", selectedStartDateTime!, setStartDateTime),
+            _buildDatePicker("마감 시간", selectedDueDateTime!, setDueDateTime),
             _buildDivider(),
             _buildRadioSection("알림 설정", getReminderTimeRadio(), _selectedTime.label),
             _buildDivider(),
@@ -199,7 +200,7 @@ class _TodoUpdateScreenState extends State<TodoUpdateScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         TextButton(
-          onPressed: () => Navigator.pushReplacementNamed(context, "/"),
+          onPressed: () => Navigator.pushReplacementNamed(context, RouteName.todoDetail,arguments: todoDetail!.id),
           child: Text("취소", style: TextStyle(fontSize: 16)),
         ),
         ElevatedButton(

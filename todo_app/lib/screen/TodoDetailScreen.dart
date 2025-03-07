@@ -81,6 +81,11 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
         title: Text("할일 상세", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(onPressed: () => {
+              Navigator.pushReplacementNamed(context, RouteName.home)},
+              icon: Icon(Icons.home))
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -111,7 +116,7 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
                     ),
                   ),
                   ElevatedButton.icon(
-                    onPressed: () => {Navigator.pushNamed(context, RouteName.todoUpdate,arguments: todoDetail)},
+                    onPressed: () => {Navigator.pushReplacementNamed(context, RouteName.todoUpdate,arguments: todoDetail)},
                     icon: Icon(Icons.edit, size: 18),
                     label: Text("수정하기", style: TextStyle(fontSize: 18)),
                     style: ElevatedButton.styleFrom(

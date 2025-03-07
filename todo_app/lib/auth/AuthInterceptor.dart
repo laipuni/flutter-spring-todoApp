@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/RouteName.dart';
+import 'package:todo_app/screen/LoginScreen.dart';
 import 'package:todo_app/service/SecureStorageService.dart';
 import 'package:todo_app/service/SharedPreferencesService.dart';
 
@@ -19,14 +20,14 @@ class _AuthInterceptorState extends State<AuthInterceptor> {
       future: isAuthenticated(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator()); //  인증 확인
+          return const Center(child: CircularProgressIndicator()); // 로딩 화면
         }
 
         if (snapshot.data == false) {
           //  인증되지 않은 사용자는 로그인 페이지로 이동
           SharedPreferencesService().saveRedirectUrl(widget.routeName);
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, "/login");
+            Navigator.pushReplacementNamed(context, RouteName.login);
           });
           return const SizedBox(); // 빈 화면 반환
         }
