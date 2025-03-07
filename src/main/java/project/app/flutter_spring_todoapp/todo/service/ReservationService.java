@@ -12,6 +12,7 @@ import project.app.flutter_spring_todoapp.notification.dto.NotificationUpdateDto
 import project.app.flutter_spring_todoapp.notification.service.NotificationService;
 import project.app.flutter_spring_todoapp.redis.RedisService;
 import project.app.flutter_spring_todoapp.redis.ReminderMessage;
+import project.app.flutter_spring_todoapp.redis.UpdateReminderMessage;
 import project.app.flutter_spring_todoapp.security.oauth2.dto.SessionMember;
 import project.app.flutter_spring_todoapp.todo.TodoUpdateDto;
 import project.app.flutter_spring_todoapp.todo.domain.Todo;
@@ -88,7 +89,8 @@ public class ReservationService {
         if(notification.changeTimeType(request.getTimeType()) || notification.changeDueDate(request.getDueDate())){
             //알림 시간 타입 or 마감 시간을 변경 했을 경우
             //redis에 ttl key 제거 후, 생성
-            redisService.updateReminder(ReminderMessage.of(notification));
+            redisService.updateReminder(UpdateReminderMessage
+                    .of(notification.getId(), request.getDueDate(),request.getTimeType()));
         }
     }
 
