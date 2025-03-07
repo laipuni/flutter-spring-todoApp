@@ -48,9 +48,9 @@ dependencies {
     //spring data redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    //quartz
-    implementation 'org.quartz-scheduler:quartz:2.3.2'
-    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+//    //quartz
+//    implementation 'org.quartz-scheduler:quartz:2.3.2'
+//    implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
