@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.app.flutter_spring_todoapp.exception.fcm.FailedSendNotificationException;
 import project.app.flutter_spring_todoapp.exception.global.FailedResolveSessionMemberException;
 import project.app.flutter_spring_todoapp.exception.api.ApiErrorResponse;
+import project.app.flutter_spring_todoapp.exception.global.LoginRequiredException;
+import project.app.flutter_spring_todoapp.exception.global.UnAuthorizationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -37,12 +39,44 @@ public class GlobalExceptionController {
         );
     }
 
+    //403(Forbidden) vs 401(UnAuthorized) => 자원 O, 권한 X vs 인증 X
     @ExceptionHandler(FailedResolveSessionMemberException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiErrorResponse<Object> FailedSendFcmException(final FailedResolveSessionMemberException e){
         log.debug("[FailedResolveSessionMemberException] Session does not contain a valid SessionMember attribute.");
         return ApiErrorResponse.of(
                 HttpStatus.FORBIDDEN,
+                e.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(UnAuthorizationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiErrorResponse<Object> UnAuthorizationException(final UnAuthorizationException e){
+        return ApiErrorResponse.of(
+                HttpStatus.FORBIDDEN,
+                e.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(LoginRequiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiErrorResponse<Object> LoginRequiredException(final LoginRequiredException e){
+        return ApiErrorResponse.of(
+                HttpStatus.UNAUTHORIZED,
+                e.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> IllegalArgumentException(final IllegalArgumentException e){
+        log.debug("[IllegalArgumentException] msg = {}", e.getMessage());
+        return ApiErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
                 e.getMessage(),
                 null
         );
