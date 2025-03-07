@@ -28,15 +28,11 @@ class RedisServiceTest {
     @Test
     void saveReminder() throws InterruptedException {
         //given
-        String fcmToken = "fcmToken";
         Long notificationId = 1L;
         LocalDateTime dueTime = LocalDateTime.of(2025,3,4,1,35);
         TimeType fifteen = TimeType.FIFTEEN;
         ReminderMessage reminderMessage = ReminderMessage.builder()
-                .fcmToken(fcmToken)
                 .notificationId(notificationId)
-                .title("\"할일\"이 " + fifteen.getDescription() + " 남았습니다")
-                .content("자세히 확인하시려면 해당 알림을 클릭해주세요.")
                 .dueTime(dueTime)
                 .timeType(fifteen)
                 .build();
@@ -53,24 +49,37 @@ class RedisServiceTest {
     @Test
     void deleteReminder(){
         //given
-        String fcmToken = "fcmToken";
         Long notificationId = 1L;
-        LocalDateTime dueTime = LocalDateTime.of(2025,3,4,1,35);
-        TimeType fifteen = TimeType.FIFTEEN;
-        ReminderMessage reminderMessage = ReminderMessage.builder()
-                .fcmToken(fcmToken)
-                .notificationId(notificationId)
-                .title("\"할일\"이 " + fifteen.getDescription() + " 남았습니다")
-                .content("자세히 확인하시려면 해당 알림을 클릭해주세요.")
-                .dueTime(dueTime)
-                .timeType(fifteen)
-                .build();
+
         ValueOperations<String, Object> operations = redisTemplate.opsForValue();
-        operations.set(NOTIFICATION_REMINDER + notificationId, reminderMessage);
+        operations.set(NOTIFICATION_REMINDER + notificationId, notificationId);
         //when
         redisService.deleteReminder(notificationId);
         //then
         assertThat(redisTemplate.hasKey(NOTIFICATION_REMINDER+notificationId)).isFalse();
+    }
+
+    @DisplayName("Redis에 저장된 알림을 제거한 뒤 ttl을 변경후 알림을 저장한다.")
+    @Test
+    void updateReminder(){
+        //given
+        Long notificationId = 1L;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dueTime = LocalDateTime.of(now.getYear() + 1, now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute());
+        TimeType fifteen = TimeType.FIFTEEN;
+        UpdateReminderMessage reminderMessage = UpdateReminderMessage.builder()
+                .notificationId(notificationId)
+                .dueTime(dueTime)
+                .timeType(fifteen)
+                .build();
+        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+        operations.set(NOTIFICATION_REMINDER + notificationId, notificationId);
+        //when
+        redisService.updateReminder(reminderMessage);
+        redisTemplate.getExpire(NOTIFICATION_REMINDER+notificationId);
+        //then
+        assertThat(redisTemplate.hasKey(NOTIFICATION_REMINDER+notificationId)).isTrue();
+        assertThat(redisTemplate.getExpire(NOTIFICATION_REMINDER+notificationId)).isEqualTo(reminderMessage.getNotificationSecond());
     }
 
 }
