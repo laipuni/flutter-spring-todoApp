@@ -1,5 +1,6 @@
 package project.app.flutter_spring_todoapp.redis;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,19 +19,18 @@ public class RedisService {
 
     private final RedisTemplate<String,Object> redisTemplate;
 
-    public void saveReminder(final ReminderMessage reminderMessage,final Long ttlSeconds){
-        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
-        if (isValidSaveReminder(reminderMessage, ttlSeconds)) {
-            //Redis에 알림 데이터 저장 + TTL 설정
-            operations.set(createReminderKey(reminderMessage.getNotificationId()),
-                    reminderMessage, ttlSeconds, TimeUnit.SECONDS);
-            log.info("{} {} redis 저장 ttl = {}",NOTIFICATION_REMINDER,reminderMessage.getNotificationId(),ttlSeconds);
-        }
+    public void saveReminder(final ReminderMessage reminderMessage, final Long ttlSeconds){
+        //Redis에 알림 데이터 저장 + TTL 설정
+        setDataWithTtl(createReminderKey(reminderMessage.getNotificationId()),
+                reminderMessage.getNotificationId(), ttlSeconds, TimeUnit.SECONDS);
     }
 
-    private static boolean isValidSaveReminder(final ReminderMessage reminderMessage, final Long ttlSeconds) {
-        //redis에 알림 데이터를 저장할 수 있는지 검증
-        return reminderMessage != null && reminderMessage.getNotificationId() != null && ttlSeconds > 0;
+    private void setDataWithTtl(final String key, final Object value, final long ttl, final TimeUnit timeUnit){
+        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+        if(value != null && ttl > 0 && timeUnit != null){
+            operations.set(key,value,ttl,timeUnit);
+            log.info("{} redis 저장 ttl = {}",key, ttl);
+        }
     }
 
     public void deleteReminder(final Long notificationId){
@@ -42,10 +42,12 @@ public class RedisService {
         }
     }
 
-    public void updateReminder(final ReminderMessage reminderMessage){
+    public void updateReminder(final UpdateReminderMessage reminderMessage){
         //redis에 ttl key 제거 후, 생성
         deleteReminder(reminderMessage.getNotificationId());
-        saveReminder(reminderMessage,reminderMessage.getNotificationSecond());
+        Long ttl = reminderMessage.getNotificationSecond();
+        setDataWithTtl(createReminderKey(reminderMessage.getNotificationId()),
+                reminderMessage.getNotificationId(), ttl, TimeUnit.SECONDS);
     }
 
     private String createReminderKey(Long notificationId){
