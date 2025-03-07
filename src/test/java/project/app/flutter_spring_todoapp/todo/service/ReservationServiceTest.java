@@ -140,7 +140,7 @@ class ReservationServiceTest {
         assertThat(todoList).hasSize(1);
     }
 
-    @DisplayName("예약한 할일과 알림을 수정한다.")
+    @DisplayName("알림의 시간 타입 혹은 마감시간이 변경되었을 때, 알림을 수정한다.")
     @Test
     void updateTodoWithNotification(){
         //given
