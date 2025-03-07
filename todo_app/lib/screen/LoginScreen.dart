@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/HostName.dart';
 import 'package:todo_app/RouteName.dart';
 import 'package:todo_app/auth/AuthService.dart';
+import 'package:todo_app/http/HttpInterceptor.dart';
 import 'package:todo_app/service/SharedPreferencesService.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,14 +26,27 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       String? idToken = await user.getIdToken();
       String? token = await _sharedPreferencesService.getFcmToken();
-      await _authService.sendTokenToBackend(idToken, token);
+      await sendTokenToBackend(idToken, token);
       setState(() {
         _currentUser = user;
       });
-
+      //이전에 접근했던 url로 다시 돌아가도록 설정
       String? redirectUrl = await _sharedPreferencesService.getRedirectUrl();
       Navigator.pushReplacementNamed(context, redirectUrl ?? RouteName.home);
     }
+  }
+
+  ///Firebase ID 토큰 + FCM 토큰을 백엔드로 전송
+  Future<void> sendTokenToBackend(String? idToken, String? fcmToken) async {
+    if (idToken == null) return;
+    Map<String,dynamic> response = await HttpInterceptor(context).post(
+      Uri.parse("${HostName.host}/api/auth/google"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $idToken',
+      },
+      body: jsonEncode({'token': fcmToken}),
+    );
   }
 
   /// 로그아웃 실행

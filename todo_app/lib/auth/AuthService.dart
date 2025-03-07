@@ -26,7 +26,7 @@ class AuthService {
     UserCredential userCredential = await _auth.signInWithCredential(credential);
     final User? user = userCredential.user;
     if (user != null) {
-      final String? idToken = await user.getIdToken();
+      final String? idToken = await user.getIdToken(true);
       final String? refreshToken = userCredential.credential?.accessToken; // 🔹 Firebase는 refresh_token을 accessToken에 저장
 
       if (idToken != null && refreshToken != null) {
@@ -35,24 +35,6 @@ class AuthService {
       }
     }
     return user;
-  }
-
-  /// 🔹 Firebase ID 토큰 + FCM 토큰을 백엔드로 전송
-  Future<void> sendTokenToBackend(String? idToken, String? fcmToken) async {
-    if (idToken == null) return;
-    final response = await http.post(
-      Uri.parse("${HostName.host}/api/auth/google"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $idToken',
-      },
-      body: jsonEncode({'token': fcmToken}),
-    );
-    if (response.statusCode == 200) {
-      print("백엔드 로그인 성공: ${response.body}");
-    } else {
-      print("백엔드 로그인 실패");
-    }
   }
 
   //  SharedPreferencesService를 사용하여 로그인 여부 확인
