@@ -30,6 +30,7 @@ class MemberRepositoryTest {
                 .nickName(nickName)
                 .role(Role.USER)
                 .email(email)
+                .fcmToken("fcmToken")
                 .profile(profile)
                 .build();
 
