@@ -10,23 +10,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
-    private static final DateTimeFormatter FORMATTER_SIX = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-    private static final DateTimeFormatter FORMATTER_THREE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String date = p.getText();
+        String date = p.getText().split("\\.")[0];
         try {
-            LocalDateTime dateTime;
-            if (date.length() > 23) {
-                // 6자리 밀리초
-                dateTime = LocalDateTime.parse(date, FORMATTER_SIX);
-            } else {
-                // 3자리 밀리초
-                dateTime = LocalDateTime.parse(date, FORMATTER_THREE);
-            }
             // 초와 밀리초를 0으로 초기화
-            return dateTime.withSecond(0).withNano(0);
+            return LocalDateTime.parse(date, FORMATTER);
         } catch (DateTimeParseException e) {
             throw new RuntimeException("Invalid date format: " + date, e);
         }
