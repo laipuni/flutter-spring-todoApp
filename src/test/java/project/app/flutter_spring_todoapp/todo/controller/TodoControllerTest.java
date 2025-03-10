@@ -1,17 +1,24 @@
 package project.app.flutter_spring_todoapp.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import project.app.flutter_spring_todoapp.member.Role;
 import project.app.flutter_spring_todoapp.security.oauth2.dto.SessionMember;
 import project.app.flutter_spring_todoapp.todo.domain.TodoPriority;
 import project.app.flutter_spring_todoapp.todo.domain.TodoStatus;
@@ -25,6 +32,7 @@ import project.app.flutter_spring_todoapp.todo.service.TodoService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +60,26 @@ TodoControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @WithMockUser
+    @BeforeEach
+    void setup() {
+        //임의의 sessionMemeber값을 principal로 설정
+        SessionMember sessionMember = SessionMember.builder()
+                .profile("MockProfile")
+                .nickName("MockName")
+                .memberSeq(1L)
+                .build();
+
+        SimpleGrantedAuthority role = new SimpleGrantedAuthority(Role.USER.getRoleName());
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(sessionMember, null, List.of(role));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     @DisplayName("등록된 할일 조회요청 테스트")
     @Test
     void findTodos() throws Exception {
@@ -101,7 +128,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.todoList[0].status").value("IN_PROGRESS"));
 
     }
-    @WithMockUser
+    
     @DisplayName("할일(Todo)을 추가요청 테스트")
     @Test
     void addTodo() throws Exception {
@@ -158,7 +185,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.status").value("IN_PROGRESS"));
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 빈 제목을 받았을 경우 예외가 발생한다.")
     @Test
     void addTodoWithEmptyTitle() throws Exception {
@@ -209,7 +236,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 제한된 길이를 넘은 제목을 받았을 경우 예외가 발생한다.")
     @Test
     void addTodoWithWrongSizeTitle() throws Exception {
@@ -262,7 +289,7 @@ TodoControllerTest {
 
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 시작 날짜가 없을 경우 예외가 발생한다.")
     @Test
     void addTodoWithNullStartDate() throws Exception {
@@ -315,7 +342,7 @@ TodoControllerTest {
 
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 마감 날짜가 없을 경우 예외가 발생한다.")
     @Test
     void addTodoWithNullDueDate() throws Exception {
@@ -366,7 +393,7 @@ TodoControllerTest {
 
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo)추가 요청을 받았을 때, 우선 순위가 없을 경우 예외가 발생한다.")
     @Test
     void addTodoWithNullPriority() throws Exception {
@@ -417,7 +444,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("상세 할일(Todo) 조회요청 테스트")
     @Test
     void detailTodo() throws Exception {
@@ -459,7 +486,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.status").value("IN_PROGRESS"));
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청 테스트")
     @Test
     void updateTodo() throws Exception {
@@ -520,7 +547,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data.status").value("DONE"));
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청 테스트")
     @Test
     void updateTodoWithNullTodoId() throws Exception {
@@ -571,7 +598,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.message").value("수정할 할일의 id는 필수 값 입니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 할일 제목이 빈칸일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithEmptyTitle() throws Exception {
@@ -623,7 +650,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 잘못된 길이의 제목일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithWrongSizeTitle() throws Exception {
@@ -675,7 +702,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 시작 날짜가 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullStartDate() throws Exception {
@@ -727,7 +754,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 마감 날짜가 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullDueDate() throws Exception {
@@ -777,7 +804,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 우선 순위 값이 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullPriority() throws Exception {
@@ -829,7 +856,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일(Todo) 수정요청을 받았을 때, 일의 상태 값이 null일 경우 예외가 발생한다.")
     @Test
     void updateTodoWithNullStatus() throws Exception {
@@ -882,7 +909,7 @@ TodoControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @WithMockUser
+    
     @DisplayName("할일 삭제 요청 테스트")
     @Test
     void removeTodoById() throws Exception {
@@ -902,7 +929,7 @@ TodoControllerTest {
                 .thenReturn(response);
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos")                        .with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos")
                         .with(csrf())
                         .contentType(APPLICATION_JSON)
                         .content(body)
