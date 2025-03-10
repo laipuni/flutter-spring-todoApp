@@ -159,14 +159,14 @@ class NotificationServiceTest {
                 .todo(todo)
                 .dueTime(dueDate)
                 .timeType(fifteen)
-                .title(String.format("\"%s\"가 %s 남았습니다.", todo.getTitle(), fifteen.getTime()))
+                .title(String.format("\"%s\"가 %s 남았습니다.", todo.getTitle(), fifteen.getDescription()))
                 .content("해당 알림을 탭하시면 자세히 볼 수 있어요!")
                 .build();
         notificationRepository.save(notification);
 
         String editedTitle = "수정된 제목";
         TimeType half = TimeType.HALF;
-        String expectedTitle = String.format("\"%s\"가 %s 남았습니다.", editedTitle, half.getTime());
+        String expectedTitle = String.format("\"%s\"가 %s 남았습니다.", editedTitle, half.getDescription());
         NotificationUpdateDto updateDto = NotificationUpdateDto.builder()
                 .todoId(todo.getId())
                 .title(editedTitle)
@@ -227,7 +227,7 @@ class NotificationServiceTest {
                 .todo(todo)
                 .dueTime(dueDate)
                 .timeType(fifteen)
-                .title("\"" + todo.getTitle() + "\"이" + fifteen.getTime() + " 남았습니다.")
+                .title("\"" + todo.getTitle() + "\"이" + fifteen.getDescription() + " 남았습니다.")
                 .content("해당 알림을 탭하시면 자세히 볼 수 있어요!")
                 .build();
         notificationRepository.save(notification);
@@ -282,7 +282,7 @@ class NotificationServiceTest {
                 .todo(todo)
                 .dueTime(dueDate)
                 .timeType(fifteen)
-                .title("\"" + todo.getTitle() + "\"이" + fifteen.getTime() + " 남았습니다.")
+                .title("\"" + todo.getTitle() + "\"이" + fifteen.getDescription() + " 남았습니다.")
                 .content("해당 알림을 탭하시면 자세히 볼 수 있어요!")
                 .build();
         notificationRepository.save(notification);
@@ -343,7 +343,7 @@ class NotificationServiceTest {
                 .todo(todo)
                 .dueTime(dueDate)
                 .timeType(fifteen)
-                .title("\"" + todo.getTitle() + "\"이" + fifteen.getTime() + " 남았습니다.")
+                .title("\"" + todo.getTitle() + "\"이" + fifteen.getDescription() + " 남았습니다.")
                 .content("해당 알림을 탭하시면 자세히 볼 수 있어요!")
                 .build();
         notificationRepository.save(notification);
