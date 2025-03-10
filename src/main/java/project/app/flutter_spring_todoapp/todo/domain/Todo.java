@@ -1,10 +1,13 @@
 package project.app.flutter_spring_todoapp.todo.domain;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
+import org.threeten.bp.DateTimeUtils;
 import project.app.flutter_spring_todoapp.member.Member;
 
 import java.time.LocalDate;
@@ -12,7 +15,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Todo {
 
     @Id @GeneratedValue
@@ -54,21 +57,15 @@ public class Todo {
         this.member = member;
     }
 
-    public static Todo of(final String title, final String description,
-                          final LocalDateTime startDate, final LocalDateTime dueDate,
-                          final TodoPriority priority, final Member member){
-
-        return of(title,description,startDate,dueDate,null,priority,member);
-    }
-
-    public static Todo of(final String title, final String description,
-                          final LocalDateTime startDate, final LocalDateTime dueDate,
-                          TodoStatus status, final TodoPriority priority,final Member member
+    public static Todo of(String title, final String description,
+                          LocalDateTime startDate, LocalDateTime dueDate,
+                          TodoStatus status, TodoPriority priority, final Member member
     ){
-        if(status == null){
-            //사용자가 상태를 설정하지 않았을 경우 지정한 날짜에 따라 상태를 지정함
-            status = calculateStatus(startDate, dueDate);
-        }
+        // 기본값 설정
+        startDate = (startDate != null) ? startDate : LocalDateTime.now();
+        dueDate = (dueDate != null) ? dueDate : LocalDateTime.now().plusDays(1);
+        status = (status != null) ? status : calculateStatus(startDate, dueDate);
+        priority = (priority != null) ? priority : TodoPriority.LOW;
 
         return Todo.builder()
                 .title(title)
@@ -95,44 +92,15 @@ public class Todo {
     public void update(final String title, final String description,
                        final LocalDateTime startDate, final LocalDateTime dueDate,
                        final TodoStatus status, final TodoPriority priority){
-        this.title = StringUtils.hasText(title) ? title : "빈 제목";
-        this.description = description;
-        changeDate(startDate,dueDate);
+        this.title = StringUtils.hasText(title) ? title : this.title;
+        this.description = description != null ? description : this.description;
+        this.startDate = startDate != null ? startDate : this.startDate;
+        this.dueDate = dueDate != null ? dueDate : this.dueDate;
         this.status = status != null ? status : this.status;
         this.priority = priority != null ? priority : this.priority;
     }
 
-    public void changeStartDate(final LocalDateTime startDate){
-        this.startDate = startDate;
-    }
-
-
-    public void changeDueDate(final LocalDateTime dueDate){
-        this.dueDate = dueDate;
-    }
-
-    public void changeDate(final LocalDateTime startDate, final LocalDateTime dueDate){
-        changeStartDate(startDate);
-        changeDueDate(dueDate);
-    }
-
     public boolean isWriter(final Long memberId){
         return this.member.getId().equals(memberId);
-    }
-
-    public void done(){
-        this.status = TodoStatus.DONE;
-    }
-
-    public void todo(){
-        this.status = TodoStatus.TODO;
-    }
-
-    public void inProgress(){
-        this.status = TodoStatus.IN_PROGRESS;
-    }
-
-    public boolean isDone(){
-        return this.status.equals(TodoStatus.DONE);
     }
 }

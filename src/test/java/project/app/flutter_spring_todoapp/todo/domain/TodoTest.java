@@ -47,7 +47,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus expectedStatus = TodoStatus.IN_PROGRESS; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,start,due, priority,member);
+        Todo todo = Todo.of(title, description,start,due,null,priority,member);
 
         //then
         assertThat(todo).isNotNull()
@@ -84,7 +84,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus expectedStatus = TodoStatus.TODO; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,start,due, priority,member);
+        Todo todo = Todo.of(title, description,start,due, null, priority,member);
 
         //then
         assertThat(todo).isNotNull()
@@ -121,7 +121,7 @@ class TodoTest {
         TodoPriority priority = TodoPriority.MEDIUM;
         TodoStatus expectedStatus = TodoStatus.DONE; // 테스트 예상 할일의 상태
 
-        Todo todo = Todo.of(title, description,start,due, priority, member);
+        Todo todo = Todo.of(title, description,start,due, null, priority, member);
 
         //then
         assertThat(todo).isNotNull()
