@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import project.app.flutter_spring_todoapp.IntegrationTestSupport;
 import project.app.flutter_spring_todoapp.fcm.NotificationMessage;
 import project.app.flutter_spring_todoapp.fcm.service.FcmService;
 import project.app.flutter_spring_todoapp.redis.RedisService;
@@ -17,8 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class RedisExpirationListenerTest {
+class RedisExpirationListenerTest extends IntegrationTestSupport {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;

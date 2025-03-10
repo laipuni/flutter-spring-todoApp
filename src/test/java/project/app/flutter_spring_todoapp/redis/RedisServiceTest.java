@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import project.app.flutter_spring_todoapp.IntegrationTestSupport;
 import project.app.flutter_spring_todoapp.notification.TimeType;
 
 import java.time.LocalDateTime;
@@ -15,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static project.app.flutter_spring_todoapp.redis.RedisService.NOTIFICATION_REMINDER;
 
 
-@SpringBootTest
-class RedisServiceTest {
+class RedisServiceTest extends IntegrationTestSupport {
 
     @Autowired
     RedisService redisService;

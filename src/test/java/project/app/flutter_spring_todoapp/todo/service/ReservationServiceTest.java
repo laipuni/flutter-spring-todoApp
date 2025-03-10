@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import project.app.flutter_spring_todoapp.IntegrationTestSupport;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.member.Role;
 import project.app.flutter_spring_todoapp.member.repository.MemberRepository;
@@ -34,8 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
-class ReservationServiceTest {
+class ReservationServiceTest extends IntegrationTestSupport {
 
     @Autowired
     ReservationService reservationService;

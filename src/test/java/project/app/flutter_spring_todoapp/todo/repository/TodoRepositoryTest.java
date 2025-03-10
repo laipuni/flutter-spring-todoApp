@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import project.app.flutter_spring_todoapp.IntegrationTestSupport;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.member.Role;
 import project.app.flutter_spring_todoapp.member.repository.MemberRepository;
@@ -26,8 +27,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
-class TodoRepositoryTest {
+class TodoRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     TodoRepository todoRepository;
@@ -49,6 +49,7 @@ class TodoRepositoryTest {
                 .nickName(nickName)
                 .role(Role.USER)
                 .email(email)
+                .fcmToken("fcmToken")
                 .profile(profile)
                 .build();
         memberRepository.save(member);
@@ -84,6 +85,7 @@ class TodoRepositoryTest {
         Member member = Member.builder()
                 .nickName(nickName)
                 .role(Role.USER)
+                .fcmToken("fcmToken")
                 .email(email)
                 .profile(profile)
                 .build();
@@ -133,6 +135,7 @@ class TodoRepositoryTest {
                 .nickName(nickName)
                 .role(Role.USER)
                 .email(email)
+                .fcmToken("fcmToken")
                 .profile(profile)
                 .build();
         memberRepository.save(member);

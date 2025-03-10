@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import project.app.flutter_spring_todoapp.IntegrationTestSupport;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.member.Role;
 
@@ -13,8 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
-class MemberRepositoryTest {
+class MemberRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     MemberRepository memberRepository;
