@@ -8,15 +8,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.threeten.bp.DateTimeUtils;
+import project.app.flutter_spring_todoapp.BaseEntity;
 import project.app.flutter_spring_todoapp.member.Member;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Todo {
+public class Todo extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "todo_id")

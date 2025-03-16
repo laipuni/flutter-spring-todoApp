@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
+import project.app.flutter_spring_todoapp.BaseEntity;
 import project.app.flutter_spring_todoapp.member.Member;
 import project.app.flutter_spring_todoapp.todo.domain.Todo;
 
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification {
+public class Notification extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;
