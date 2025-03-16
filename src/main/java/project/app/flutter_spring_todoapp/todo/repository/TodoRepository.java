@@ -10,7 +10,7 @@ import project.app.flutter_spring_todoapp.todo.dto.response.DetailTodoResponse;
 import java.util.List;
 import java.util.Optional;
 
-public interface TodoRepository extends JpaRepository<Todo, Long> {
+public interface TodoRepository extends JpaRepository<Todo, Long>, TodoRepositoryCustom {
 
     List<Todo> findAllByMemberIdOrderByIdDesc(Long memberId);
 

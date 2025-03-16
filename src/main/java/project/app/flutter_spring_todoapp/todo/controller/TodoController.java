@@ -25,6 +25,16 @@ public class TodoController {
         return ApiResponse.ok(response);
     }
 
+    @GetMapping("/api/v2/todos")
+    public ApiResponse<TodoListResponse> findTodosV2(@RequestParam(value = "search", defaultValue = "") String search,
+                                                     @RequestParam(value = "page",defaultValue = "0") int page,
+                                                     @RequestParam(value = "order", defaultValue = "latest") String order,
+                                                     @RequestParam(value = "sort",defaultValue = "desc") String sort,
+                                                     SessionMember sessionMember){
+        TodoListResponse response = todoService.findAll(sessionMember.getMemberSeq(),page,search,order,sort);
+        return ApiResponse.ok(response);
+    }
+
     @PostMapping("/api/todos")
     public ApiResponse<AddTodoResponse> addTodo(@Valid @RequestBody AddTodoRequest request,SessionMember sessionMember){
         AddTodoResponse response = reservationService.createTodoWithNotification(request,sessionMember);

@@ -42,6 +42,11 @@ public class TodoServiceImpl implements TodoService{
         return TodoListResponse.of(todoRepository.findAllByMemberIdOrderByIdDesc(memberId));
     }
 
+    @Override
+    public TodoListResponse findAll(final Long memberId, final int page, final String search, final String order, final String sort) {
+        return todoRepository.findTodosByMemberWithFilters(memberId,page,search,order,sort);
+    }
+
     @Transactional
     @Override
     public Todo update(final TodoUpdateDto request) {

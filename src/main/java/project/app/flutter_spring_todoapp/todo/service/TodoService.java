@@ -14,6 +14,8 @@ public interface TodoService {
 
     public TodoListResponse findAll(final Long memberId);
 
+    public TodoListResponse findAll(final Long memberId,final int page, final String search, final String order, final String sort);
+
     public Todo update(final TodoUpdateDto updateDto);
 
     public DetailTodoResponse detailTodo(final Long todoId);

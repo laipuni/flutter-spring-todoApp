@@ -1,6 +1,7 @@
 package project.app.flutter_spring_todoapp.todo.dto.response;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TodoItemResponse {
 
     private Long id;
@@ -24,7 +25,7 @@ public class TodoItemResponse {
     private TodoPriority priority;
 
     @Builder
-    private TodoItemResponse(final Long id, final String title, final String description,
+    public TodoItemResponse(final Long id, final String title, final String description,
                             final LocalDateTime startDate, final LocalDateTime dueDate,
                             final TodoStatus status, final TodoPriority priority) {
         this.id = id;
