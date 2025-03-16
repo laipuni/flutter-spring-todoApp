@@ -18,34 +18,38 @@ class _TodoScreenState extends State<TodoScreen> {
   List<TodoView> _todoList = [];
   bool _isLoading = true;
   final SecureStorageService _secureStorageService = SecureStorageService();
+  int page = 0;
+  final TextEditingController search = TextEditingController();
+  String order = "";
+  String sort = "";
 
   @override
   void initState() {
     super.initState();
-    receiveTodoList();
+    setTodoList();
   }
 
-  Future<void> receiveTodoList() async {
-    var url = Uri.parse("${HostName.host}/api/todos");
-    String? idToken = await _secureStorageService.getAccessToken();
-
-    Map<String, dynamic> response = await HttpInterceptor(context).get(
-      url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $idToken',
-        },
-    );
-    setTodoList(response);
-  }
-
-  void setTodoList(Map<String, dynamic> response) {
+  Future<void> setTodoList() async {
+    Map<String, dynamic> response = await receiveTodoList();
     List<dynamic> todosJson = response["data"]["todoList"];
-
     setState(() {
       _todoList = todosJson.map((todo) => TodoView.fromJson(todo)).toList();
       _isLoading = false;
     });
+  }
+
+  Future<Map<String, dynamic>> receiveTodoList() async{
+    var url = Uri.parse("${HostName.host}/api/v2/todos?page=$page&search=${search.text}&order=$order&sort=$sort");
+    String? idToken = await _secureStorageService.getAccessToken();
+
+    Map<String, dynamic> response = await HttpInterceptor(context).get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $idToken',
+      },
+    );
+    return response;
   }
 
   @override
@@ -68,16 +72,37 @@ class _TodoScreenState extends State<TodoScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _todoList.isEmpty
-          ? Center(child: Text("등록된 할 일이 없습니다.", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
-          : Padding(
-        padding: EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: _todoList.length,
-          itemBuilder: (context, index) {
-            return _buildTodoCard(_todoList[index]);
-          },
-        ),
-      ),
+          ? Column(
+        children: [
+          SizedBox(height: 20), // 검색바 위에 공백 추가
+          _buildSearchBar(),
+          SizedBox(height: 30), // 검색바 아래 공백 추가
+          Expanded(
+            child: Center(
+              child: Text(
+                "등록된 할 일이 없습니다.",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      )
+          : Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(height: 20), // 검색바 위에 공백 추가
+              _buildSearchBar(),
+              SizedBox(height: 30), // 검색바 아래 공백 추가
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _todoList.length,
+                  itemBuilder: (context, index) {
+                    return _buildTodoCard(_todoList[index]);
+                  },
+                ),
+              ),
+            ],
+          ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.pushReplacementNamed(context, RouteName.todoAdd),
         icon: Icon(Icons.add),
@@ -115,6 +140,27 @@ class _TodoScreenState extends State<TodoScreen> {
         onTap: () {
           Navigator.pushReplacementNamed(context, RouteName.todoDetail, arguments: todo.id);
         },
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(){
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20), // 검색바 좌우 여백
+      child: TextField(
+        controller: search,
+        decoration: InputDecoration(
+          hintText: '검색어를 입력하세요',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.search), // 돋보기 모양 아이콘
+            onPressed: () {
+              setTodoList(); // 돋보기 버튼 클릭 시 실행할 함수
+            },
+          ),
+        ),
       ),
     );
   }
