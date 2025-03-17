@@ -179,8 +179,7 @@ class _TodoScreenState extends State<TodoScreen> {
     return DropdownButton<Sort>(
         value: value, // 선택된 값
         items: items,
-        onChanged: callback,
-        onTap: setTodoList,
+        onChanged: (Sort? newValue) => {callback?.call(newValue),setTodoList()},
       );
   }
 
