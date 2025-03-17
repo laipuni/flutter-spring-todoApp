@@ -74,9 +74,12 @@ public class TodoRepositoryCustomImpl implements TodoRepositoryCustom{
         if (order.equalsIgnoreCase("priority")) {
             //우선순위가 높은 순, 우선순위가 같다면 최근 등록된 순
             orders.add(new OrderSpecifier<>(direction, getPriorityOrder()));
+            //등록한 순서대로
+            orders.add(new OrderSpecifier<>(Order.DESC, todo.createdTime));
+        } else{
+            //등록된 날짜에 오름차순 혹은 내림차순으로 정렬
+            orders.add(new OrderSpecifier<>(direction, todo.createdTime));
         }
-        //등록한 순서대로
-        orders.add(new OrderSpecifier<>(direction, todo.createdTime));
         return orders.toArray(OrderSpecifier[]::new);
     }
 
