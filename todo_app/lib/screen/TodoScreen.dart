@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/HostName.dart';
 import 'package:todo_app/RouteName.dart';
 import 'package:todo_app/auth/AuthService.dart';
+import 'package:todo_app/enum/Sort.dart';
 import 'package:todo_app/enum/TodoStatus.dart';
 import 'package:todo_app/http/HttpInterceptor.dart';
 import 'package:todo_app/model/Todo.dart';
@@ -20,8 +21,8 @@ class _TodoScreenState extends State<TodoScreen> {
   final SecureStorageService _secureStorageService = SecureStorageService();
   int page = 0;
   final TextEditingController search = TextEditingController();
-  String order = "";
-  String sort = "";
+  Sort order = TodoSort.latest;
+  Sort sort = Direction.DESC;
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _TodoScreenState extends State<TodoScreen> {
   }
 
   Future<Map<String, dynamic>> receiveTodoList() async{
-    var url = Uri.parse("${HostName.host}/api/v2/todos?page=$page&search=${search.text}&order=$order&sort=$sort");
+    var url = Uri.parse("${HostName.host}/api/v2/todos?page=$page&search=${search.text}&order=${order.value}&sort=${sort.value}");
     String? idToken = await _secureStorageService.getAccessToken();
 
     Map<String, dynamic> response = await HttpInterceptor(context).get(
@@ -92,6 +93,14 @@ class _TodoScreenState extends State<TodoScreen> {
             children: [
               SizedBox(height: 20), // 검색바 위에 공백 추가
               _buildSearchBar(),
+              SizedBox(height: 10), // 검색바 위에 공백 추가
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  bulidDropdownButton(TodoSort.values,order,setOrder),
+                  bulidDropdownButton(Direction.values,sort,setSort),
+                ],
+              ),
               SizedBox(height: 30), // 검색바 아래 공백 추가
               Expanded(
                 child: ListView.builder(
@@ -163,5 +172,38 @@ class _TodoScreenState extends State<TodoScreen> {
         ),
       ),
     );
+  }
+
+  Widget bulidDropdownButton(List<Sort> sort, Sort value, ValueChanged<Sort?>? callback){
+    List<DropdownMenuItem<Sort>> items = getSortDropdownMenuItem(sort);
+    return DropdownButton<Sort>(
+        value: value, // 선택된 값
+        items: items,
+        onChanged: callback,
+        onTap: setTodoList,
+      );
+  }
+
+  List<DropdownMenuItem<Sort>> getSortDropdownMenuItem(List<Sort> sort){
+    return sort.map((sort) {
+      return DropdownMenuItem<Sort>(
+        value: sort,
+        child: Text(sort.label),
+      );
+    }).toList();
+  }
+
+  void setOrder(Sort? value) {
+    if (value == null) return;
+    setState(() {
+      order = value;
+    });
+  }
+
+  void setSort(Sort? value) {
+    if (value == null) return;
+    setState(() {
+      sort = value;
+    });
   }
 }
