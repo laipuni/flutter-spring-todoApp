@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:todo_app/HostName.dart';
 import 'package:todo_app/RouteName.dart';
@@ -19,7 +20,10 @@ class _TodoScreenState extends State<TodoScreen> {
   List<TodoView> _todoList = [];
   bool _isLoading = true;
   final SecureStorageService _secureStorageService = SecureStorageService();
+  final ScrollController _scrollController = ScrollController();
+
   int page = 0;
+  bool hasNext = true;
   final TextEditingController search = TextEditingController();
   Sort order = TodoSort.latest;
   Sort sort = Direction.DESC;
@@ -28,13 +32,54 @@ class _TodoScreenState extends State<TodoScreen> {
   void initState() {
     super.initState();
     setTodoList();
+    _scrollController.addListener(scrollListener);
+  }
+
+  void scrollListener(){
+    if (isEndScroll() && !_isLoading && hasNext) {
+      //다음 스크롤에 정보가 있다면 불러오기
+      addNextTodoList();
+    }
+  }
+
+  bool isEndScroll() {
+    //스크롤이 화면에 하단으로 내려갔는지 확인
+    return _scrollController.position.pixels >=
+      _scrollController.position.maxScrollExtent * 0.90;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> setTodoList() async {
+    setState(() {
+      _isLoading = true;
+    });
+    page = 0;
     Map<String, dynamic> response = await receiveTodoList();
     List<dynamic> todosJson = response["data"]["todoList"];
     setState(() {
       _todoList = todosJson.map((todo) => TodoView.fromJson(todo)).toList();
+      hasNext = response["data"]["hasNext"];
+      _isLoading = false;
+    });
+  }
+
+  Future<void> addNextTodoList() async{
+    setState(() {
+      _isLoading = true;
+    });
+    // 다음 페이지의 정보를 불러옴
+    page += 1;
+    Map<String, dynamic> response = await receiveTodoList();
+    List<dynamic> todosJson = response["data"]["todoList"];
+    final newItems = todosJson.map((todo) => TodoView.fromJson(todo)).toList();
+    setState(() {
+      hasNext = response["data"]["hasNext"];
+      _todoList.addAll(newItems);
       _isLoading = false;
     });
   }
@@ -70,14 +115,20 @@ class _TodoScreenState extends State<TodoScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _todoList.isEmpty
+      body:
+          _todoList.isEmpty
           ? Column(
         children: [
           SizedBox(height: 20), // 검색바 위에 공백 추가
           _buildSearchBar(),
           SizedBox(height: 30), // 검색바 아래 공백 추가
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              bulidDropdownButton(TodoSort.values,order,setOrder),
+              bulidDropdownButton(Direction.values,sort,setSort),
+            ],
+          ),
           Expanded(
             child: Center(
               child: Text(
@@ -104,12 +155,20 @@ class _TodoScreenState extends State<TodoScreen> {
               SizedBox(height: 30), // 검색바 아래 공백 추가
               Expanded(
                 child: ListView.builder(
+                  controller: _scrollController,
                   itemCount: _todoList.length,
                   itemBuilder: (context, index) {
                     return _buildTodoCard(_todoList[index]);
                   },
                 ),
               ),
+              if (_isLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: CircularProgressIndicator(
+                    color: Colors.blueAccent,
+                  ),
+                ),
             ],
           ),
       floatingActionButton: FloatingActionButton.extended(
