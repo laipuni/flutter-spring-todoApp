@@ -17,6 +17,7 @@ import project.app.flutter_spring_todoapp.member.service.MemberService;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
 
