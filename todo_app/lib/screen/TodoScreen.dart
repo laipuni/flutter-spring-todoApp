@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:todo_app/HostName.dart';
 import 'package:todo_app/RouteName.dart';
 import 'package:todo_app/auth/AuthService.dart';
 import 'package:todo_app/enum/Sort.dart';
+import 'package:todo_app/enum/TodoPriority.dart';
 import 'package:todo_app/enum/TodoStatus.dart';
 import 'package:todo_app/http/HttpInterceptor.dart';
 import 'package:todo_app/model/Todo.dart';
@@ -204,12 +205,42 @@ class _TodoScreenState extends State<TodoScreen> {
           "${DateTimeUtils.showDateTime(todo.startTime)} ~ ${DateTimeUtils.showDateTime(todo.dueTime)}",
           style: TextStyle(fontSize: 14, color: Colors.grey[700]),
         ),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[600]),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildPriorityBadge(todo.priority),
+            Icon(Icons.arrow_forward_ios, color: Colors.grey[600]),
+          ],
+        ),
         onTap: () {
           Navigator.pushReplacementNamed(context, RouteName.todoDetail, arguments: todo.id);
         },
       ),
     );
+  }
+
+  Widget _buildPriorityBadge(TodoPriority priority) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: _getPriorityColor(priority),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        priority.label,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+      ),
+    );
+  }
+
+  MaterialColor _getPriorityColor(TodoPriority priority){
+    if(priority == TodoPriority.LOW){
+      return Colors.green;
+    } else if(priority == TodoPriority.MEDIUM){
+      return Colors.orange;
+    } else {
+      return Colors.red;
+    }
   }
 
   Widget _buildSearchBar(){
