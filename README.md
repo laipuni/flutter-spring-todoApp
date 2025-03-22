@@ -1,6 +1,6 @@
 # 프로젝트 개요
 
-이 프로젝트는 Spring Boot 기반의 백엔드와 Flutter 기반의 프론트엔드로 구성된 애플리케이션입니다. 사용자 인증, 데이터 저장, 푸시 알림 등의 기능을 제공합니다.
+flutter, spring으로 만든 간단한 할일 알림앱 입니다.
 
 ## 기술 스펙 (Tech Stack)
 
@@ -55,32 +55,45 @@ flutter run
 - 할 일 삭제
 - 포그라운드 알림 기능
 - 백그라운드 알림 기능
+- 할 일 무한 스크롤
+- 할 일 조건 검색 및 정렬
 
 ## 남은 기능
-- 할 일 무한 스크롤
-- 할 일 초성 검색
 - 캘린더로 할 일 조회
 
 ## ERD
 <img src="https://github.com/user-attachments/assets/ebdfa1c6-6268-4426-b1e9-6a329cfb23e7" width="600">
 
 ## 메인
-<img src="https://github.com/user-attachments/assets/af562665-08b6-41c2-97ba-612595285adb" width="400">
+<img src="https://github.com/user-attachments/assets/d3141f11-8c82-429a-a5c2-4f8117a0150b" width="300">
+
+## 검색
+### 검색
+[할일 검색.webm](https://github.com/user-attachments/assets/62a4a5d0-8b45-402d-bae7-b095beb2baa4)
+
+### <중요도_정렬>
+[중요도_정렬.webm](https://github.com/user-attachments/assets/67cc01bf-1cb8-49e7-8e63-6884f812698a)
+
+### <최신순 정렬>
+[최신순_정렬.webm](https://github.com/user-attachments/assets/88e72e04-4949-477e-a7f0-307edad1e212)
+
+### <무한 스크롤>
+[무한 스크롤.webm](https://github.com/user-attachments/assets/12812a38-e8ec-432e-939b-5f40e10d8aed)
 
 ## 할일 상세 페이지
-<img src="https://github.com/user-attachments/assets/3f7958cd-963b-48a1-9a89-29d5e39d70df" width="400">
+<img src="https://github.com/user-attachments/assets/a7ad5a33-bd90-4bb5-b937-a42c5d0a19e1" width="300">
 
 ## 할일 수정 페이지
-<img src="https://github.com/user-attachments/assets/3c5d3f2e-2045-43b0-94de-d58cd123f3f1" width="400">
-<img src="https://github.com/user-attachments/assets/4094bbac-3c13-4cb6-8700-6162cd7b2d6a" width="400">
+<img src="https://github.com/user-attachments/assets/8b01dddb-86bb-437d-926e-2206df2dc8eb" width="300">
+<img src="https://github.com/user-attachments/assets/5282cb9e-8d33-4068-bf18-f5284a704490" width="300">
 
 ## 할일 추가 페이지
-<img src="https://github.com/user-attachments/assets/600e4fd5-4fe3-491b-9abd-20951ee2f744" width="400">
-<img src="https://github.com/user-attachments/assets/096c6589-03af-4ef4-83e7-be99c7cd4d86" width="400">
+<img src="https://github.com/user-attachments/assets/22c096d2-7021-4faf-922c-b4a7a50ccb9a" width="300">
+<img src="https://github.com/user-attachments/assets/8d57cc2f-d74f-4b13-8a0c-4bc9d439312e" width="300">
+
 
 ## 로그인(Spring security, firebase auth)
-<img src="https://github.com/user-attachments/assets/8985cc61-dc77-4f56-b244-3234ad1da8f3" width="400">
-
+<img src="https://github.com/user-attachments/assets/5f802797-f2da-4dcf-b353-243bef430279" width="300">
 
 ## 알림(firebase cloud messaging, redis ttl)
 ### 앱이 포그라운드 상태일 때 알림 발생
@@ -90,5 +103,5 @@ flutter run
 [백그라운드 알림.webm](https://github.com/user-attachments/assets/282a2e35-c054-4c1e-8e03-4581a37307ef)
 
 ## 서버,클라이언트 에러 페이지
-<img src="https://github.com/user-attachments/assets/dd4d6a1c-37a4-4c20-839e-ddd7fdfa19e6" width="400">
-<img src="https://github.com/user-attachments/assets/2f319230-17c4-48f8-b97d-9e2ef29830b5" width="400">
+<img src="https://github.com/user-attachments/assets/dd4d6a1c-37a4-4c20-839e-ddd7fdfa19e6" width="300">
+<img src="https://github.com/user-attachments/assets/2f319230-17c4-48f8-b97d-9e2ef29830b5" width="300">
